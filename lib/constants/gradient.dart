@@ -8,3 +8,11 @@ const gradient = LinearGradient(
       main2,
       main1,
     ]);
+
+const redGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      red,
+      red1,
+    ]);

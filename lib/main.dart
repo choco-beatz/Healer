@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healer_therapist/bloc/admin/admin_bloc.dart';
+import 'package:healer_therapist/bloc/login/login_bloc.dart';
+import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/view/splashscreen/splash_screen.dart';
 
 void main() {
@@ -11,12 +15,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-   debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-      
-      ),
-      home: SplashScreen()
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AdminBloc(),
+        ),
+        BlocProvider(create: (context) => LoginBloc())
+      ],
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(cardColor: white),
+          home: SplashScreen()),
     );
   }
 }
