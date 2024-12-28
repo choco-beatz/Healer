@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,6 @@ class AddTherapist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     File? image;
-    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: const PreferredSize(
@@ -49,40 +49,33 @@ class AddTherapist extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Center(
-                                  child: InkWell(
-                                onTap: () {
-                                  context
-                                      .read<AdminBloc>()
-                                      .add(PickImageEvent());
-                                },
-                                child: BlocBuilder<AdminBloc, AdminState>(
-                                  builder: (context, state) {
-                                    if (state.pickedImage != null) {
-                                      image = state.pickedImage;
-                                      return CircleAvatar(
-                                        radius: 70,
-                                        child: ClipOval(
-                                          child: Image.file(
-                                            state.pickedImage!,
-                                            fit: BoxFit.cover,
-                                            width: 140,
-                                            height: 140,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const CircleAvatar(
-                                      backgroundColor: main1,
-                                      radius: 70,
-                                      foregroundColor: white,
-                                      child: Icon(
-                                        Icons.camera_alt,
-                                        size: 80,
+                                  child: InkWell(onTap: () {
+                                context.read<AdminBloc>().add(PickImageEvent());
+                              }, child: BlocBuilder<AdminBloc, AdminState>(
+                                      builder: (context, state) {
+                                if (state.pickedImage != null) {
+                                  image = state.pickedImage;
+                                  return CircleAvatar(
+                                    radius: 70,
+                                    child: ClipOval(
+                                      child: Image.file(
+                                        state.pickedImage!,
+                                        fit: BoxFit.cover,
+                                        width: 140,
+                                        height: 140,
                                       ),
-                                    );
-                                  },
-                                ),
-                              )),
+                                    ),
+                                  );
+                                }
+                                return const CircleAvatar(
+                                    backgroundColor: main1,
+                                    radius: 70,
+                                    foregroundColor: white,
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      size: 80,
+                                    ));
+                              }))),
                               space,
                               buildTextFormField(
                                 label: ' Name',
@@ -125,29 +118,35 @@ class AddTherapist extends StatelessWidget {
                                   isMultiline: true),
                               space,
                               buildTextFormField(
-                                label: ' Experience(Optional)',
+                                validator: (value) =>
+                                    value == null || value.isEmpty
+                                        ? 'Please enter the Experience'
+                                        : null,
+                                label: ' Experience',
                                 controller: experienceController,
                                 hint: 'Enter the experience',
                               ),
                               space,
-                              const Text(' Password'),
-                              SizedBox(
-                                height: 55,
-                                width: width * 0.9,
-                                child: TextFormField(
-                                    controller: passwordController,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter the password';
-                                      } else if (value.length < 6) {
-                                        return 'Password must be more than 6 letters';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: textField('Enter the password'),
-                                    cursorColor: Colors.black26,
-                                    style: textFieldStyle),
+                              const Text(
+                                ' Password',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500),
                               ),
+                              TextFormField(
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  controller: passwordController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter the password';
+                                    } else if (value.length < 6) {
+                                      return 'Password must be more than 6 letters';
+                                    }
+                                    return null;
+                                  },
+                                  decoration: textField('Enter the password'),
+                                  cursorColor: Colors.black26,
+                                  style: textFieldStyle),
                               space,
                             ])))),
             space,
@@ -157,12 +156,13 @@ class AddTherapist extends StatelessWidget {
                   final therapist = TherapistModel(
                     name: nameController.text,
                     email: emailController.text,
-                    experience: int.parse(experienceController.text),
+                    experience: int.tryParse(experienceController.text),
                     bio: bioController.text,
                     qualification: qualificationController.text,
                     specialization: specializationController.text,
                     password: passwordController.text,
                   );
+                  log('from ui : ${therapist.experience}');
                   context.read<AdminBloc>().add(AddTherapistEvent(
                       therapist: therapist, imageFile: image));
                   ScaffoldMessenger.of(context).showSnackBar(therapistCreated);

@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healer_therapist/bloc/login/login_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/gradient.dart';
+import 'package:healer_therapist/services/login/login_service.dart';
 import 'package:healer_therapist/view/admin/adminhome/admin_homescreen.dart';
 import 'package:healer_therapist/view/login/login_screen.dart';
 import 'package:healer_therapist/view/therapist/therapisthome/therapist_homescreen.dart';
@@ -33,16 +35,22 @@ class _SplashScreenState extends State<SplashScreen> {
       body: MultiBlocListener(
         listeners: [
           BlocListener<LoginBloc, LoginState>(
-            listener: (context, state) {
-              if (state.tokenValid && state.role == 'admin') {
+            listener: (context, state) async {
+              final role = await getUserRole();
+              if (state.redirect == true) {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()));
+              }
+              if (state.tokenValid && role == 'admin') {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const AdminHome()),
                 );
-              } else if (state.tokenValid && state.role == 'therapist') {
+              } else if (state.tokenValid && role == 'therapist') {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const TherapistHome()),
+                  MaterialPageRoute(
+                      builder: (context) => const TherapistHome()),
                 );
               } else {
                 Navigator.pushReplacement(context,
@@ -50,22 +58,22 @@ class _SplashScreenState extends State<SplashScreen> {
               }
             },
           ),
-          BlocListener<LoginBloc, LoginState>(
-            listener: (context, state) {
-              if (state.role == 'admin') {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AdminHome()),
-                );
-              } else if (state.role == 'therapist') {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const TherapistHome()),
-                );
-              }
-            },
-          ),
+          // BlocListener<LoginBloc, LoginState>(
+          //   listener: (context, state) {
+          //     if (state.role == 'admin') {
+          //       Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute(builder: (context) => const AdminHome()),
+          //       );
+          //     } else if (state.role == 'therapist') {
+          //       Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (context) => const TherapistHome()),
+          //       );
+          //     }
+          //   },
+          // ),
         ],
         child: Container(
           height: height,

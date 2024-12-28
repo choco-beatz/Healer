@@ -16,16 +16,14 @@ Widget buildTextFormField({
         label,
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
-      SizedBox(
-        height: isMultiline ? 150 : 55,
-        child: TextFormField(
-          controller: controller,
-          validator: validator,
-          maxLines: isMultiline ? 5 : 1,
-          decoration: textField(hint),
-          cursorColor: Colors.black26,
-          style: textFieldStyle,
-        ),
+      TextFormField(
+        controller: controller,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validator,
+        maxLines: isMultiline ? 5 : 1,
+        decoration: textField(hint),
+        cursorColor: Colors.black26,
+        style: textFieldStyle,
       ),
     ],
   );

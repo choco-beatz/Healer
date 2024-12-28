@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:healer_therapist/bloc/admin/admin_bloc.dart';
 import 'package:healer_therapist/bloc/login/login_bloc.dart';
 import 'package:healer_therapist/constants/snackbar.dart';
 import 'package:healer_therapist/constants/space.dart';
@@ -34,7 +33,7 @@ class LoginScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const TherapistHome()));
-            } else {
+            } else if (state.hasError) {
               ScaffoldMessenger.of(context).showSnackBar(loginErrorSnackBar);
             }
           },
@@ -46,12 +45,13 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Welcome(),
+                    const Welcome(),
                     SizedBox(
                       height: 55,
                       width: width * 0.9,
                       child: TextFormField(
                           controller: emailController,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter the email';
@@ -67,6 +67,7 @@ class LoginScreen extends StatelessWidget {
                       height: 55,
                       width: width * 0.9,
                       child: TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           controller: passwordController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -87,7 +88,9 @@ class LoginScreen extends StatelessWidget {
                           final data = LoginModel(
                               email: emailController.text,
                               password: passwordController.text);
-                          context.read<LoginBloc>().add(LoginActionEvent(data: data));
+                          context
+                              .read<LoginBloc>()
+                              .add(LoginActionEvent(data: data));
                         }
                       },
                       child: const Button(text: 'Login'),

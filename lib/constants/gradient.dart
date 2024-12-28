@@ -16,3 +16,11 @@ const redGradient = LinearGradient(
       red,
       red1,
     ]);
+
+const geryGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      border,
+      textColor,
+    ]);

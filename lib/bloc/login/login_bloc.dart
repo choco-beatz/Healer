@@ -11,9 +11,9 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   late final StreamSubscription tokenCheck;
-  
+
   LoginBloc() : super(LoginInitial(role: '')) {
-       tokenCheck = Stream.periodic(
+    tokenCheck = Stream.periodic(
       const Duration(minutes: 15),
       (_) => CheckTokenEvent(),
     ).listen(
@@ -21,6 +21,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         add(event);
       },
     );
+    
     on<LoginActionEvent>((event, emit) async {
       String role = await login(event.data);
       if (role == 'admin') {
@@ -32,31 +33,42 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     });
 
     on<CheckTokenEvent>(((event, emit) async {
-      log(state.tokenValid.toString());
-
       if (state.tokenValid && state.isInitialized) return;
       final token = await getValidToken();
-
       if (token == null || isExpired(token)) {
         emit(LoginState(
-            
             hasError: true,
             redirect: true,
             isInitialized: false,
             message: '  Token expired!'));
       } else if (!isExpired(token)) {
-        emit(LoginState(
-            
-            tokenValid: true,
-            isInitialized: true));
+        emit(LoginState(tokenValid: true, isInitialized: true));
       } else {
         emit(LoginState(
-           
             hasError: true,
             redirect: true,
             isInitialized: false,
             message: '  Token expired!'));
       }
     }));
+
+    on<LogOutEvent>((event, emit) async {
+      emit(LoginState());
+
+      try {
+        await clearToken();
+        emit(LoginState(
+          redirect: true,
+          message: 'Logout successful!',
+        ));
+      } catch (e) {
+        log('Logout failed: $e');
+
+        emit(LoginState(
+          hasError: true,
+          message: 'Logout failed. Please try again.',
+        ));
+      }
+    });
   }
 }

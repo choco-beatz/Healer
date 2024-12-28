@@ -10,7 +10,7 @@ class AdminEvent {}
 //   });
 // }
 
-// class CkeckTokenEvent extends AdminEvent {}
+class CkeckTokenEvent extends AdminEvent {}
 
 class FetchTherapistEvent extends AdminEvent {}
 
@@ -49,4 +49,4 @@ class SearchTherapistEvent extends AdminEvent {
   SearchTherapistEvent(this.searchText);
 }
 
-class LogOutEvent extends AdminEvent {}
+// class LogOutEvent extends AdminEvent {}

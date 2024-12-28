@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healer_therapist/constants/gradient.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
+import 'package:healer_therapist/widgets/greetings.dart';
 
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({
@@ -24,10 +25,7 @@ class HomeAppBar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "Hi Admin",
-              style: lightWhite,
-            ),
+            Greeting(),
             Text(
               "Your Therapists",
               style: bigBoldWhite,

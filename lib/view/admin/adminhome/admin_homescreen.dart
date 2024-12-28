@@ -12,6 +12,7 @@ import 'package:healer_therapist/view/admin/adminhome/widgets/home_app_bar.dart'
 import 'package:healer_therapist/view/admin/adminhome/widgets/therapist_card.dart';
 import 'package:healer_therapist/view/login/login_screen.dart';
 import 'package:healer_therapist/view/admin/viewtherapist/view_therapist_screen.dart';
+import 'package:healer_therapist/widgets/drawer.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({super.key});
@@ -23,7 +24,7 @@ class AdminHome extends StatefulWidget {
 class _AdminHomeState extends State<AdminHome> {
   @override
   void initState() {
-    context.read<LoginBloc>().add(CheckTokenEvent());
+    context.read<AdminBloc>().add(CkeckTokenEvent());
     context.read<AdminBloc>().add(FetchTherapistEvent());
 
     super.initState();
@@ -35,22 +36,7 @@ class _AdminHomeState extends State<AdminHome> {
     double height = MediaQuery.of(context).size.height;
     return SafeArea(
         child: Scaffold(
-      drawer: Drawer(
-        child: BlocListener<AdminBloc, AdminState>(
-            listener: (context, state) {
-              if (state.redirectToLogin == true) {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => LoginScreen()));
-              }
-            },
-            child: ListTile(
-              onTap: () {
-                context.read<AdminBloc>().add(LogOutEvent());
-              },
-              leading: const Icon(Icons.logout_outlined),
-              title: const Text("Log out"),
-            )),
-      ),
+      drawer: const DrawerWidget(),
       body: BlocConsumer<AdminBloc, AdminState>(
         listener: (context, state) {
           log('redirect: ${state.redirectToLogin.toString()}');

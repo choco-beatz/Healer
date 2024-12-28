@@ -24,6 +24,7 @@ Future<http.Response?> makeRequest(
   headers = {
     ...?headers,
     'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json',
   };
 
   switch (method) {
@@ -58,7 +59,7 @@ Future<bool> makeMultipartRequest({
       'password': therapist.password,
       'qualification': therapist.qualification,
       'specialization': therapist.specialization,
-      'experience': therapist.experience.toString(),
+      'experience': therapist.experience.toString() ?? '0',
       'bio': therapist.bio,
     });
 

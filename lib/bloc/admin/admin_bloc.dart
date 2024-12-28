@@ -1,4 +1,4 @@
-
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -13,52 +13,55 @@ part 'admin_state.dart';
 
 class AdminBloc extends Bloc<AdminEvent, AdminState> {
   final ImagePicker imagePicker = ImagePicker();
-  
+  late final StreamSubscription tokenCheck;
 
   AdminBloc() : super(AdminInitial(list: [])) {
-    // tokenCheck = Stream.periodic(
-    //   const Duration(minutes: 15),
-    //   (_) => CkeckTokenEvent(),
-    // ).listen(
-    //   (event) {
-    //     add(event);
-    //   },
-    // );
+    tokenCheck = Stream.periodic(
+      const Duration(minutes: 15),
+      (_) => CkeckTokenEvent(),
+    ).listen(
+      (event) {
+        add(event);
+      },
+    );
 
-    // on<CkeckTokenEvent>(((event, emit) async {
-    //   log(state.tokenValid.toString());
+    on<CkeckTokenEvent>(((event, emit) async {
+      log(state.tokenValid.toString());
 
-    //   if (state.tokenValid && state.isInitialized) return;
-    //   final token = await getValidToken();
+      if (state.tokenValid && state.isInitialized) return;
+      final token = await getValidToken();
 
-    //   if (token == null || isExpired(token)) {
-    //     emit(AdminState(
-    //         list: state.list,
-    //         isLoading: false,
-    //         hasError: true,
-    //         redirectToLogin: true,
-    //         isInitialized: false,
-    //         message: '  Token expired!'));
-    //   } else if (!isExpired(token)) {
-    //     emit(AdminState(
-    //         list: state.list,
-    //         isLoading: false,
-    //         tokenValid: true,
-    //         isInitialized: true));
-    //   } else {
-    //     emit(AdminState(
-    //         list: state.list,
-    //         isLoading: false,
-    //         hasError: true,
-    //         redirectToLogin: true,
-    //         isInitialized: false,
-    //         message: '  Token expired!'));
-    //   }
-    // }));
+      if (token == null || isExpired(token)) {
+        emit(AdminState(
+          tokenValid: false,
+            list: state.list,
+            isLoading: false,
+            hasError: true,
+            redirectToLogin: true,
+            isInitialized: false,
+            message: '  Token expired!'));
+      } else if (!isExpired(token)) {
+        emit(AdminState(
+            list: state.list,
+            isLoading: false,
+            tokenValid: true,
+            isInitialized: true));
+      } else {
+        emit(AdminState(
+            list: state.list,
+            isLoading: false,
+            hasError: true,
+            redirectToLogin: true,
+            isInitialized: false,
+            message: '  Token expired!'));
+      }
+    }));
 
     on<FetchTherapistEvent>(
       (event, emit) async {
         if (state.isLoading) return;
+
+        emit(AdminState(isLoading: true));
 
         try {
           final therapists = await fetchTherapist();
@@ -194,31 +197,30 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       }
     });
 
-    on<LogOutEvent>((event, emit) async {
-      emit(AdminState(
-    list: state.list,
-    isLoading: true, 
-  ));
-  
-  try {
-    await clearToken(); 
-    emit(AdminState(
-      redirectToLogin: true,
-      list: [],
-      message: 'Logout successful!',
-    ));
-  } catch (e) {
-    log('Logout failed: $e');
+    //   on<LogOutEvent>((event, emit) async {
+    //     emit(AdminState(
+    //   list: state.list,
+    //   isLoading: true,
+    // ));
 
-  
-    emit(AdminState(
-      list: state.list,
-      isLoading: false,
-      hasError: true,
-      message: 'Logout failed. Please try again.',
-    ));
-  }
+    // try {
+    //   await clearToken();
+    //   emit(AdminState(
+    //     redirectToLogin: true,
+    //     list: [],
+    //     message: 'Logout successful!',
+    //   ));
+    // } catch (e) {
+    //   log('Logout failed: $e');
 
-    });
+    //   emit(AdminState(
+    //     list: state.list,
+    //     isLoading: false,
+    //     hasError: true,
+    //     message: 'Logout failed. Please try again.',
+    //   ));
+    // }
+
+    //   });
   }
 }

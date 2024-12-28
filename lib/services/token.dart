@@ -19,6 +19,7 @@ bool isExpired(String token) {
     }
     final expiryDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
     log('Token expiry date: $expiryDate');
+    log(DateTime.now().isAfter(expiryDate).toString());
     return DateTime.now().isAfter(expiryDate);
   } catch (e) {
     log('Error decoding token: $e');

@@ -23,6 +23,7 @@ Future<List<TherapistModel>> fetchTherapist() async {
 }
 
 Future<bool> addTherapist(TherapistModel therapist, File? imageFile) async {
+  log('from service : ${therapist.experience}');
   return makeMultipartRequest(
     url: addTherapistUrl,
     method: 'POST',
@@ -61,4 +62,3 @@ Future<List<TherapistModel>> searchTherapist(String searchText) async {
     return [];
   }
 }
-

@@ -10,3 +10,4 @@ const textColor = Colors.black54;
 const red = Color.fromARGB(255, 225, 20, 20);
 const red1 = Color.fromARGB(255, 180, 1, 1);
 const transparent = Colors.transparent;
+const main1trans = Color.fromARGB(91, 2, 162, 119);

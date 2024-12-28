@@ -46,6 +46,9 @@ dependencies:
   http_parser: ^4.0.2
   awesome_snackbar_content: ^0.1.4
   popover: ^0.3.0+1
+  shared_preferences: ^2.2.3
+  table_calendar: ^3.0.9
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +79,10 @@ flutter:
     - asset/failed.png
     - asset/empty.png
     - asset/happy.png
+    - asset/appointment.png
+    - asset/business.png
+    - asset/call.png
+    - asset/chat1.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

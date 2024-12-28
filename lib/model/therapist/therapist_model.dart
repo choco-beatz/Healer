@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class TherapistModel {
   final String? id;
   final String email;

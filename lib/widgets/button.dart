@@ -4,8 +4,10 @@ import 'package:healer_therapist/constants/gradient.dart';
 
 class Button extends StatelessWidget {
   final String text;
+  final bool deActivate;
   const Button({
     super.key,
+    this.deActivate = false,
     required this.text,
   });
 
@@ -17,7 +19,8 @@ class Button extends StatelessWidget {
       height: height * 0.07,
       width: width * 0.8,
       decoration: BoxDecoration(
-          gradient: gradient, borderRadius: BorderRadius.circular(15)),
+          gradient: deActivate ? geryGradient : gradient,
+          borderRadius: BorderRadius.circular(15)),
       child: Center(
         child: Text(
           text,
@@ -28,4 +31,3 @@ class Button extends StatelessWidget {
     );
   }
 }
-
