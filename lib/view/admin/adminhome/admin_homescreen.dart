@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/admin/admin_bloc.dart';
-import 'package:healer_therapist/bloc/login/login_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/snackbar.dart';
-import 'package:healer_therapist/view/admin/adminhome/widgets/add_therapist_button.dart';
+import 'package:healer_therapist/view/admin/addtherapist/add_therapist_screen.dart';
+import 'package:healer_therapist/widgets/floating_button.dart';
 import 'package:healer_therapist/view/admin/adminhome/widgets/empty.dart';
 import 'package:healer_therapist/view/admin/adminhome/widgets/home_app_bar.dart';
 import 'package:healer_therapist/view/admin/adminhome/widgets/therapist_card.dart';
@@ -118,7 +118,11 @@ class _AdminHomeState extends State<AdminHome> {
           ]);
         },
       ),
-      floatingActionButton: const AddTherapistButton(),
+      floatingActionButton:  FloatingButton(text: ' Add Therapist',
+      onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => AddTherapist())));
+        },),
     ));
   }
 }

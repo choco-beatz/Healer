@@ -120,7 +120,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
       SlotStatusEvent event, Emitter<AppointmentState> emit) async {
     try {
       List<AppointmentModel> list = await slotStatus(event.status);
-      log(list.toString());
+      // log(list.toString());
       emit(AppointmentState(
         appointments: list,
         isLoading: false,

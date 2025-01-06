@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
-import 'package:healer_therapist/model/user/user_model.dart';
+import 'package:healer_therapist/model/client/client_model.dart';
 
 class ClientCardOngoing extends StatelessWidget {
   const ClientCardOngoing({
@@ -20,7 +20,7 @@ class ClientCardOngoing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log(client.name);
+    log(client.profile.name);
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Card(
@@ -56,7 +56,7 @@ class ClientCardOngoing extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(client.name, style: smallBold),
+                      Text(client.profile.name, style: smallBold),
                       smallSpace,
                     ],
                   ),

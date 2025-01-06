@@ -1,7 +1,7 @@
 part of 'therapist_bloc.dart';
 
 class TherapistState {
-  final List<ClientModel> list;
+  final List<RequestModel> list;
   final bool isLoading;
   final bool isInitialized;
   final bool isSuccess;
@@ -22,7 +22,7 @@ class TherapistState {
   });
 
   TherapistState copyWith({
-    List<ClientModel>? list,
+    List<RequestModel>? list,
     bool? isLoading,
     bool? isInitialized,
     bool? isSuccess,
@@ -44,6 +44,5 @@ class TherapistState {
     );
   }
 }
-
 
 final class TherapistInitial extends TherapistState {}

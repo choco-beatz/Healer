@@ -24,3 +24,11 @@ const geryGradient = LinearGradient(
       border,
       textColor,
     ]);
+
+    const nullGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      white,
+      white
+    ]);

@@ -13,3 +13,4 @@ const slotStatusUrl = '${baseUrl}appointment/therapist?status=';
 const requestStatusUrl = '${baseUrl}requests/therapist?status=';
 const requestRespondUrl = '${baseUrl}requests/respond';
 const slotUrl = '${baseUrl}slots';
+const profileUrl = '${baseUrl}user/profile';

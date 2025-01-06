@@ -1,4 +1,4 @@
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,7 +84,7 @@ class _AppointmentState extends State<AppointmentScheduleTab> {
                                   child: ListView(
                                     scrollDirection: Axis.horizontal,
                                     children: slots.map((slot) {
-                                      log(slot.toString());
+                                      // log(slot.toString());
                                       var times =
                                           '${slot['startTime']}-${slot['endTime']}';
                                       return Padding(
@@ -98,7 +98,7 @@ class _AppointmentState extends State<AppointmentScheduleTab> {
                                               style: colorTextStyle),
                                           deleteIconColor: main1trans,
                                           onDeleted: () {
-                                            log('delete $times');
+                                            // log('delete $times');
                                             var splitTimes = times.split('-');
                                             context.read<AppointmentBloc>().add(
                                                   RemoveTimeSlotEvent(

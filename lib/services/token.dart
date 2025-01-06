@@ -9,6 +9,11 @@ Future<void> storeToken(String token) async {
   await secureStorage.write(key: 'token', value: token);
 }
 
+Future<void> storeUserId(String userId) async {
+  await secureStorage.write(key: 'userId', value: userId);
+}
+
+
 bool isExpired(String token) {
   try {
     final jwt = JWT.decode(token);
@@ -34,6 +39,12 @@ Future<String?> getValidToken() async {
   }
   return token;
 }
+
+Future<String?> getUserId() async {
+  final userId = await secureStorage.read(key: 'userId');
+  return userId;
+}
+
 
 Future<void> clearToken() async {
   await secureStorage.delete(key: 'token');

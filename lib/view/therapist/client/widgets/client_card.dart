@@ -5,7 +5,7 @@ import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/gradient.dart';
 import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
-import 'package:healer_therapist/model/user/user_model.dart';
+import 'package:healer_therapist/model/client/client_model.dart';
 import 'package:healer_therapist/view/therapist/client/widgets/request_button.dart';
 
 class ClientCard extends StatelessWidget {
@@ -23,7 +23,7 @@ class ClientCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final requestStatus = context.select<TherapistBloc, String?>(
-      (bloc) => bloc.state.requestStatus[client.requestId],
+      (bloc) => bloc.state.requestStatus[client.id],
     );
     if (requestStatus == "Accepted" || requestStatus == "Declined") {
       // Display status message
@@ -62,7 +62,7 @@ class ClientCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(client.name, style: smallBold),
+                        Text(client.profile.name, style: smallBold),
                         smallSpace,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -131,7 +131,7 @@ class ClientCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(client.name, style: smallBold),
+                      Text(client.profile.name, style: smallBold),
                       smallSpace,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -140,7 +140,7 @@ class ClientCard extends StatelessWidget {
                               onTap: () {
                                 context.read<TherapistBloc>().add(
                                     RequestRespondEvent(
-                                        requestId: client.requestId,
+                                        requestId: client.id,
                                         status: "Accepted"));
                               },
                               child: buildButton(text: 'Accept')),
@@ -148,7 +148,7 @@ class ClientCard extends StatelessWidget {
                               onTap: () {
                                 context.read<TherapistBloc>().add(
                                     RequestRespondEvent(
-                                        requestId: client.requestId,
+                                        requestId: client.id,
                                         status: "Declined"));
                               },
                               child: buildButton(text: 'Decline', imp: true)),

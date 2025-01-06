@@ -65,7 +65,6 @@ Future<List<AppointmentModel>> slotStatus(String status) async {
   if (response == null || response.statusCode != 200) return [];
 
   try {
-    log(response.body);
     final dynamic decodedData = jsonDecode(response.body);
 
     if (decodedData is! List) return [];

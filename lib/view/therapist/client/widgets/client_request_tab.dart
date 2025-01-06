@@ -28,7 +28,7 @@ class _ClientRequestsTabState extends State<ClientRequestsTab>
         return ListView.builder(
           itemCount: clients.length,
           itemBuilder: (context, index) {
-            final client = clients[index];
+            final client = clients[index].client;
             return GestureDetector(
               onTap: () => Navigator.push(
                 context,

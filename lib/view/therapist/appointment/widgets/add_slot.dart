@@ -149,7 +149,7 @@ void showAddSlotDialog(String day, BuildContext context, Map<String, List<Map<St
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Slot already exists!'),
-                                backgroundColor: Colors.red,
+                                backgroundColor:red,
                               ),
                             );
                             return;

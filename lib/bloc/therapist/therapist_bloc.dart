@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:healer_therapist/model/user/user_model.dart';
+import 'package:healer_therapist/model/client/client_model.dart';
 import 'package:healer_therapist/services/therapist/client_service.dart';
 
 part 'therapist_event.dart';
@@ -34,25 +34,24 @@ class TherapistBloc extends Bloc<TherapistEvent, TherapistState> {
     });
 
     on<OnGoingClientEvent>((event, emit) async {
-  emit(state.copyWith(isLoading: true, hasError: false, message: ''));
-  try {
-    final clients = await onGoingClient();
-    emit(state.copyWith(
-      list: clients,
-      isLoading: false,
-      isInitialized: true,
-      hasError: false,
-    ));
-  } catch (e) {
-    log(e.toString());
-    emit(state.copyWith(
-      isLoading: false,
-      hasError: true,
-      message: e.toString(),
-    ));
-  }
-});
-
+      emit(state.copyWith(isLoading: true, hasError: false, message: ''));
+      try {
+        final clients = await onGoingClient();
+        emit(state.copyWith(
+          list: clients,
+          isLoading: false,
+          isInitialized: true,
+          hasError: false,
+        ));
+      } catch (e) {
+        log(e.toString());
+        emit(state.copyWith(
+          isLoading: false,
+          hasError: true,
+          message: e.toString(),
+        ));
+      }
+    });
 
     on<RequestRespondEvent>((event, emit) async {
       if (state.isLoading) return;

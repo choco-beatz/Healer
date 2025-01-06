@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:healer_therapist/model/user/user_model.dart';
+import 'package:healer_therapist/model/client/client_model.dart';
 import 'package:healer_therapist/services/api_helper.dart';
 import 'package:healer_therapist/services/endpoints.dart';
 
-Future<List<ClientModel>> fetchRequest() async {
+Future<List<RequestModel>> fetchRequest() async {
   log('${requestStatusUrl}Pending');
   final response = await makeRequest('${requestStatusUrl}Pending', 'GET');
 
@@ -16,7 +16,7 @@ Future<List<ClientModel>> fetchRequest() async {
     final requests = data['requests'] as List;
     // log(requests.toString());
     return requests
-        .map((item) => ClientModel.fromJson(item as Map<String, dynamic>))
+        .map((item) => RequestModel.fromJson(item as Map<String, dynamic>))
         .toList();
   } catch (e) {
     log('Error parsing client list: $e');
@@ -24,29 +24,34 @@ Future<List<ClientModel>> fetchRequest() async {
   }
 }
 
-Future<List<ClientModel>> onGoingClient() async {
+Future<List<RequestModel>> onGoingClient() async {
   log('${requestStatusUrl}Accepted');
   final response = await makeRequest('${requestStatusUrl}Accepted', 'GET');
- 
+
   if (response == null || response.statusCode != 200) return [];
 
   try {
-    log(response.body);
+    // log(response.body);
     final data = jsonDecode(response.body) as Map<String, dynamic>;
-    final requests = data['requests'] as List;
 
+    final requests = data['requests'];
+    if (requests == null || requests is! List) {
+      log('Invalid or missing "requests" key');
+      return [];
+    }
+
+    // Map over the requests list and return a list of RequestModel
     return requests
-        .map((item) {
-          final clientData = item['requests'];
-          return clientData != null ? ClientModel.fromJson(clientData) : null;
+        .map<RequestModel>((item) {
+          return RequestModel.fromJson(item); // Correctly parse RequestModel
         })
-        .whereType<ClientModel>()
         .toList();
   } catch (e) {
     log('Error parsing client list: $e');
     return [];
   }
 }
+
 
 Future<bool> requestRespond(String requestId, String status) async {
   log('client : $requestId therapist : $status');

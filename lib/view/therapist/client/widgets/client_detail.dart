@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
-import 'package:healer_therapist/model/user/user_model.dart';
+import 'package:healer_therapist/model/client/client_model.dart';
 
 class ClientDetails extends StatelessWidget {
   final ClientModel client;
@@ -45,7 +45,7 @@ class ClientDetails extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      client.name,
+                      client.profile.name,
                       style: semiBold,
                     ),
                     space,

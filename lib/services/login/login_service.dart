@@ -22,8 +22,9 @@ Future<String> login(LoginModel login) async {
     if (response.statusCode == 200) {
       final loginResponse =
           LoginResponseModel.fromJson(jsonDecode(response.body));
-      log('User role: ${loginResponse.role}');
+      log('token: ${loginResponse.token}');
       await storeToken(loginResponse.token);
+      await storeUserId(loginResponse.userId);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('role', loginResponse.role);
       return loginResponse.role;
@@ -39,5 +40,5 @@ Future<String> login(LoginModel login) async {
 
 Future<String?> getUserRole() async {
   final prefs = await SharedPreferences.getInstance();
-  return prefs.getString('role'); 
+  return prefs.getString('role');
 }

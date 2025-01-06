@@ -28,18 +28,18 @@ class OnGoingClientsTabState extends State<OnGoingClientsTab>
         return ListView.builder(
           itemCount: clients.length,
           itemBuilder: (context, index) {
-            final client = clients[index];
+             final request = clients[index].client; 
             return GestureDetector(
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ClientDetails(client: client),
+                  builder: (context) => ClientDetails(client: request),
                 ),
               ),
               child: ClientCardOngoing(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                client: client,
+                client: request,
               ),
             );
           },

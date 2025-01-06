@@ -1,11 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:healer_therapist/constants/colors.dart';
-import 'package:healer_therapist/view/admin/addtherapist/add_therapist_screen.dart';
 
-class AddTherapistButton extends StatelessWidget {
-  const AddTherapistButton({
+class FloatingButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String text;
+  const FloatingButton({
     super.key,
+    required this.text, required this.onPressed,
   });
 
   @override
@@ -13,19 +14,16 @@ class AddTherapistButton extends StatelessWidget {
     return FloatingActionButton.extended(
         backgroundColor: main1,
         foregroundColor: white,
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => AddTherapist())));
-        },
-        label: const Row(
+        onPressed: onPressed,
+        label: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.add,
               color: white,
             ),
             Text(
-              ' Add Therapist',
-              style: TextStyle(fontSize: 20),
+              text,
+              style: const TextStyle(fontSize: 20),
             ),
           ],
         ));

@@ -24,7 +24,7 @@ class _AppoinmentState extends State<Appointment>
     super.initState();
     // context.read<TherapistBloc>().add(OnGoingClientEvent());
     // context.read<TherapistBloc>().add(FetchRequestEvent());
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 4, vsync: this);
     tabController.addListener(() {
       if (!tabController.indexIsChanging) {
         log('Tab changed to index: ${tabController.index}');
@@ -51,7 +51,7 @@ class _AppoinmentState extends State<Appointment>
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -66,24 +66,33 @@ class _AppoinmentState extends State<Appointment>
           bottom: TabBar(
             controller: tabController,
             dividerColor: white,
+            padding: EdgeInsets.only(left: 10, right: 10),
             labelColor: white,
+            labelPadding: const EdgeInsets.symmetric(
+              horizontal: 0,
+            ),
             unselectedLabelColor: main1,
             indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(10), color: main1),
             tabs: const [
               Tab(text: "     Upcoming      "),
+              Tab(text: "     Pending      "),
               Tab(text: "     Requests      "),
               Tab(text: "     Schedule      "),
             ],
           ),
         ),
-        body: TabBarView(
-          controller: tabController,
-          children: const [
-            AppointmentStatus(status: 'confirmed'),
-            AppointmentRespond(status: 'pending'),
-            AppointmentScheduleTab(),
-          ],
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TabBarView(
+            controller: tabController,
+            children: const [
+              AppointmentStatus(status: 'confirmed'),
+              AppointmentStatus(status: 'accepted'),
+              AppointmentRespond(status: 'pending'),
+              AppointmentScheduleTab(),
+            ],
+          ),
         ),
       ),
     );
