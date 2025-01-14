@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:healer_therapist/constants/colors.dart';
+import 'dart:developer';
 
-import 'package:healer_therapist/model/client/client_model.dart';
-import 'package:healer_therapist/services/socket/socket.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healer_therapist/bloc/chat/chat_bloc.dart';
+import 'package:healer_therapist/constants/colors.dart';
+import 'package:healer_therapist/services/chat/socket.dart';
 import 'package:healer_therapist/services/token.dart';
 import 'package:healer_therapist/view/therapist/chat/widgets/message_bubble.dart';
 import 'package:healer_therapist/widgets/appbar.dart';
@@ -22,13 +24,15 @@ class Message {
 }
 
 class ChatScreen extends StatefulWidget {
-  final ClientModel client;
+  // final ClientModel client;
   final SocketService socketService;
+  final String id;
 
   const ChatScreen({
     super.key,
-    required this.client,
+    // required this.client,
     required this.socketService,
+    required this.id,
   });
 
   @override
@@ -42,9 +46,9 @@ class ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override
-  void initState(){
-    
+  void initState() {
     super.initState();
+    context.read<ChatBloc>().add(LoadMessagesEvent(widget.id));
     _joinChat();
     _listenToIncomingMessages();
   }
@@ -63,6 +67,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   void _listenToIncomingMessages() {
     widget.socketService.listenToEvent('new-message', (data) {
+      log(data.toString());
       setState(() {
         _messages.add(Message(
           text: data['text'],
@@ -70,6 +75,7 @@ class ChatScreenState extends State<ChatScreen> {
           timestamp: DateTime.parse(data['timestamp']),
         ));
       });
+      log(_messages.toString());
       _scrollToBottom();
     });
   }
@@ -77,22 +83,22 @@ class ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     if (_messageController.text.trim().isNotEmpty) {
       final messageText = _messageController.text.trim();
+
+      // Emit message to the server
+      widget.socketService.emitEvent('send-message', {
+        'from': userId,
+        'to': widget.id,
+        'text': messageText,
+      });
+      _messageController.clear();
       setState(() {
         _messages.add(Message(
           text: messageText,
           isSentByMe: true,
           timestamp: DateTime.now(),
         ));
-        _messageController.clear();
       });
       _scrollToBottom();
-
-      // Emit message to the server
-      widget.socketService.emitEvent('send-message', {
-        'from': userId,
-        'to': widget.client.profile.id, // Add recipient ID here
-        'text': messageText,
-      });
     }
   }
 
@@ -108,13 +114,28 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
+ @override
+Widget build(BuildContext context) {
+  return BlocListener<ChatBloc, ChatState>(
+    listener: (context, state) {
+      if (state is MessagesLoaded) {
+        // Add loaded messages to the list
+        setState(() {
+          _messages.addAll(state.messages.map((msg) => Message(
+                text: msg.text,
+                isSentByMe: msg.from == userId,
+                // mediaUrl: msg.mediaUrl,
+                timestamp: msg.createdAt,
+              )));
+        });
+        _scrollToBottom();
+      }
+    },
+    child: Scaffold(
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(50),
         child: CommonAppBar(
-          title: widget.client.profile.name,
+          title: 'Name',
         ),
       ),
       body: Column(
@@ -133,8 +154,10 @@ class ChatScreenState extends State<ChatScreen> {
           _buildMessageInput(),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildMessageInput() {
     return Container(
@@ -145,7 +168,7 @@ class ChatScreenState extends State<ChatScreen> {
           BoxShadow(
             offset: Offset(0, -2),
             blurRadius: 2,
-            color: textColor,
+            color: fieldBG,
           ),
         ],
       ),

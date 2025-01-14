@@ -11,7 +11,7 @@ class MessageBubble extends StatelessWidget {
     required this.message,
   });
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return Align(
       alignment:
@@ -20,7 +20,7 @@ class MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: fieldBG,
                 blurRadius: 7,

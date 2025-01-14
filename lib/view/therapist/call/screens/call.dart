@@ -40,9 +40,11 @@ class _ContactsState extends State<Contacts> {
 
             return BlocBuilder<AgoraBloc, AgoraState>(
               builder: (context, agoraState) {
-                if (agoraState is AgoraLoadedState) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (agoraState is AgoraLoadedState &&
+                // if (agoraState is AgoraLoadedState) {
+                //   return const Center(child: CircularProgressIndicator());
+                // }
+                // else
+                if (agoraState is AgoraLoadedState &&
                     agoraState.agoraService != null) {
                   final agoraService = agoraState.agoraService;
 

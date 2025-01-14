@@ -11,19 +11,19 @@ import 'package:healer_therapist/view/therapist/client/widgets/request_button.da
 class ClientCard extends StatelessWidget {
   const ClientCard({
     super.key,
-    required this.client,
+    required this.request,
     required this.height,
     required this.width,
   });
 
   final double height;
   final double width;
-  final ClientModel client;
+  final RequestModel request;
 
   @override
   Widget build(BuildContext context) {
     final requestStatus = context.select<TherapistBloc, String?>(
-      (bloc) => bloc.state.requestStatus[client.id],
+      (bloc) => bloc.state.requestStatus[request.id],
     );
     if (requestStatus == "Accepted" || requestStatus == "Declined") {
       // Display status message
@@ -41,17 +41,17 @@ class ClientCard extends StatelessWidget {
                       child: CircleAvatar(
                           backgroundColor: transparent,
                           radius: width * 0.125,
-                          child: (client.image.split('.').last == 'png')
+                          child: (request.client.image.split('.').last == 'png')
                               ? Image.network(
                                   fit: BoxFit.fitHeight,
-                                  client.image,
+                                  request.client.image,
                                   width: 90,
                                   height: 90,
                                 )
                               : ClipOval(
                                   child: Image.network(
                                     fit: BoxFit.fitHeight,
-                                    client.image,
+                                    request.client.image,
                                     width: 90,
                                     height: 90,
                                   ),
@@ -62,7 +62,7 @@ class ClientCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(client.profile.name, style: smallBold),
+                        Text(request.client.profile.name, style: smallBold),
                         smallSpace,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,17 +110,17 @@ class ClientCard extends StatelessWidget {
                     child: CircleAvatar(
                         backgroundColor: transparent,
                         radius: width * 0.125,
-                        child: (client.image.split('.').last == 'png')
+                        child: (request.client.image.split('.').last == 'png')
                             ? Image.network(
                                 fit: BoxFit.fitHeight,
-                                client.image,
+                                request.client.image,
                                 width: 90,
                                 height: 90,
                               )
                             : ClipOval(
                                 child: Image.network(
                                   fit: BoxFit.fitHeight,
-                                  client.image,
+                                  request.client.image,
                                   width: 90,
                                   height: 90,
                                 ),
@@ -131,7 +131,7 @@ class ClientCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(client.profile.name, style: smallBold),
+                      Text(request.client.profile.name, style: smallBold),
                       smallSpace,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -140,7 +140,7 @@ class ClientCard extends StatelessWidget {
                               onTap: () {
                                 context.read<TherapistBloc>().add(
                                     RequestRespondEvent(
-                                        requestId: client.id,
+                                        requestId: request.id,
                                         status: "Accepted"));
                               },
                               child: buildButton(text: 'Accept')),
@@ -148,7 +148,7 @@ class ClientCard extends StatelessWidget {
                               onTap: () {
                                 context.read<TherapistBloc>().add(
                                     RequestRespondEvent(
-                                        requestId: client.id,
+                                        requestId: request.id,
                                         status: "Declined"));
                               },
                               child: buildButton(text: 'Decline', imp: true)),

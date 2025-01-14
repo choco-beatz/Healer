@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healer_therapist/bloc/chat/chat_bloc.dart';
 import 'package:healer_therapist/bloc/therapist/therapist_bloc.dart';
-import 'package:healer_therapist/services/socket/socket.dart';
+import 'package:healer_therapist/services/chat/socket.dart';
 import 'package:healer_therapist/view/therapist/chat/screens/chat.dart';
+import 'package:healer_therapist/view/therapist/chat/widgets/message_card.dart';
 import 'package:healer_therapist/widgets/floating_button.dart';
 import 'package:healer_therapist/view/therapist/chat/screens/message_screen.dart';
-import 'package:healer_therapist/view/therapist/chat/widgets/chat_card.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/client_detail.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/empty.dart';
 import 'package:healer_therapist/widgets/appbar.dart';
 
 class Inbox extends StatelessWidget {
@@ -17,8 +16,8 @@ class Inbox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // print('Triggering OnGoingClientEvent');
-      context.read<TherapistBloc>().add(OnGoingClientEvent());
+      // log('ChatEvent');
+      context.read<ChatBloc>().add(LoadChatsEvent());
     });
     return Scaffold(
       appBar: const PreferredSize(
@@ -27,56 +26,49 @@ class Inbox extends StatelessWidget {
           title: 'Inbox',
         ),
       ),
-      body: BlocBuilder<TherapistBloc, TherapistState>(
+      body: BlocBuilder<ChatBloc, ChatState>(
         builder: (context, state) {
-          final clients = state.list;
-
-          if (clients.isEmpty) {
-            return const Center(child: EmptyClient());
-          }
-          return ListView.builder(
-            itemCount: clients.length,
-            itemBuilder: (context, index) {
-              final client = clients[index].client;
-
-              return GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ClientDetails(client: client),
+          if (state is ChatLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is ChatsLoaded) {
+            final chats = state.chats;
+            return ListView.builder(
+              itemCount: chats.length,
+              itemBuilder: (context, index) {
+                final chat = chats[index];
+                final participant = chat.participants.last;
+                final lastMessageText = chat.lastMessage.text;
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BlocProvider(
+                                create: (context) =>
+                                    ChatBloc()..add(LoadMessagesEvent(chat.id)),
+                                child: ChatScreen(
+                                  id: chat.lastMessage.to,
+                                  socketService: socketService,
+                                ))));
+                  },
+                  child: MessageCard(
+                    socketService: socketService,
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    lastMessage: lastMessageText,
+                    name:participant.profile.name,
+                    image: participant.image,
                   ),
-                ),
-                child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ChatScreen(
-                                    client: client,
-                                    socketService: socketService,
-                                  )));
-                    },
-                    child: InkWell(
-                      onTap: () {
-                        print('object');
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ChatScreen(
-                                      client: client,
-                                      socketService: socketService,
-                                    )));
-                      },
-                      child: ChatCard(
-                        socketService: socketService,
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        client: client,
-                      ),
-                    )),
-              );
-            },
-          );
+                );
+              },
+            );
+          } else if (state is ChatError) {
+            return Center(child: Text(state.error));
+          } else {
+            return const Center(child: Text('No data available.'));
+          }
         },
       ),
       floatingActionButton: FloatingButton(

@@ -5,8 +5,7 @@ import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/model/client/client_model.dart';
-import 'package:healer_therapist/services/socket/socket.dart';
-import 'package:healer_therapist/view/therapist/chat/screens/message_screen.dart';
+import 'package:healer_therapist/services/chat/socket.dart';
 
 class ChatCard extends StatelessWidget {
   const ChatCard({

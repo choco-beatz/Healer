@@ -12,6 +12,7 @@ part 'admin_event.dart';
 part 'admin_state.dart';
 
 class AdminBloc extends Bloc<AdminEvent, AdminState> {
+  Timer? _debounce;
   final ImagePicker imagePicker = ImagePicker();
   late final StreamSubscription tokenCheck;
 
@@ -33,7 +34,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
 
       if (token == null || isExpired(token)) {
         emit(AdminState(
-          tokenValid: false,
+            tokenValid: false,
             list: state.list,
             isLoading: false,
             hasError: true,
@@ -173,28 +174,59 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     );
 
     on<SearchTherapistEvent>((event, emit) async {
-      log(event.searchText);
-      if (event.searchText.isEmpty) {
-        emit(AdminState(
-          list: state.list,
-          searchResults: state.list,
-          isLoading: false,
-          hasError: false,
-          isInitialized: state.isInitialized,
-          message: state.message,
-        ));
-      } else {
-        final filteredResults = await searchTherapist(event.searchText);
+      final query = event.searchText.trim();
 
-        emit(AdminState(
-          list: state.list,
-          searchResults: filteredResults,
-          isLoading: false,
-          hasError: false,
-          isInitialized: state.isInitialized,
-          message: state.message,
-        ));
+      emit(state.copyWith(
+        searchQuery: query,
+        isLoading: true,
+      ));
+
+      if (_debounce?.isActive ?? false) {
+        _debounce!.cancel();
       }
+
+      log('Search query: $query');
+
+      _debounce = Timer(const Duration(milliseconds: 300), () async {
+        log('Search query: $query');
+
+        if (query.isEmpty) {
+          emit(state.copyWith(
+            searchQuery: query,
+            searchResults: [],
+            isLoading: false,
+            hasError: false,
+            message: "Search query cleared",
+          ));
+          return;
+        }
+
+        emit(state.copyWith(
+          searchQuery: query,
+          isLoading: true,
+        ));
+
+        try {
+          final filteredResults = await searchTherapist(query);
+          emit(state.copyWith(
+            searchQuery: query, // Maintain the search query
+            searchResults: filteredResults,
+            isLoading: false,
+            hasError: false,
+            message: "Search completed successfully",
+          ));
+          log('Search results: $filteredResults');
+        } catch (error) {
+          log('Search failed: $error');
+          emit(state.copyWith(
+            searchQuery: query, // Maintain the search query
+            searchResults: [], // Empty results on error
+            isLoading: false,
+            hasError: true,
+            message: "Search failed: ${error.toString()}",
+          ));
+        }
+      });
     });
 
     //   on<LogOutEvent>((event, emit) async {

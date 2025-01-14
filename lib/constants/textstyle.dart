@@ -45,6 +45,9 @@ const bigBoldWhite = TextStyle(
   fontWeight: FontWeight.w600,
 );
 
+const lightText =
+    TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.w300);
+
 const lightWhite =
     TextStyle(color: white, fontSize: 18, fontWeight: FontWeight.w300);
 

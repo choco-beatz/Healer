@@ -4,7 +4,7 @@ import 'package:healer_therapist/bloc/admin/admin_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/model/therapist/therapist_model.dart';
-import 'package:healer_therapist/view/admin/edittherapist/edit_therapist_screen.dart';
+import 'package:healer_therapist/view/admin/edit_therapist/edit_therapist_screen.dart';
 import 'package:healer_therapist/widgets/dialog_button.dart';
 
 class More extends StatelessWidget {
@@ -19,6 +19,7 @@ class More extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
+            Navigator.pop(context);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -70,10 +71,12 @@ class More extends StatelessWidget {
                         GestureDetector(
                             onTap: () {
                               Navigator.of(context).pop();
+                              Navigator.of(context).pop();
                             },
                             child: buildButton(text: 'Cancel')),
                         GestureDetector(
                             onTap: () {
+                              Navigator.of(context).pop();
                               context.read<AdminBloc>().add(
                                     DeleteTherapistEvent(id: id),
                                   );

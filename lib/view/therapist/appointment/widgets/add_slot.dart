@@ -81,7 +81,7 @@ void showAddSlotDialog(String day, BuildContext context, Map<String, List<Map<St
                           child: const Icon(Icons.more_time),
                         ),
                       ),
-                      cursorColor: Colors.black26,
+                      cursorColor: textColor,
                       style: textFieldStyle,
                     ),
                     const SizedBox(height: 16),

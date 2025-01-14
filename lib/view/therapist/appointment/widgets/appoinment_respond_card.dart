@@ -5,6 +5,7 @@ import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/model/appointment/appointment_model.dart';
+import 'package:intl/intl.dart';
 import '../../appointment/widgets/request_button.dart';
 
 class AppointmentRespondCard extends StatefulWidget {
@@ -85,7 +86,12 @@ class _AppointmentRespondCardState extends State<AppointmentRespondCard> {
                           Text(widget.appointment.client.profile.name,
                               style: smallBold),
                           smallSpace,
-                          Text(widget.appointment.date, style: textFieldStyle),
+                          Text(
+                            DateFormat('dd MMM yyyy')
+                                .format(DateTime.parse(widget.appointment.date))
+                                .toUpperCase(),
+                            style: textFieldStyle,
+                          ),
                           smallSpace,
                           Chip(
                             side: BorderSide.none,

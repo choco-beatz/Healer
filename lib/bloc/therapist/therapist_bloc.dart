@@ -10,10 +10,10 @@ part 'therapist_state.dart';
 class TherapistBloc extends Bloc<TherapistEvent, TherapistState> {
   TherapistBloc() : super(TherapistInitial()) {
     on<FetchRequestEvent>((event, emit) async {
-      if (state.isInitialized && state.list.isNotEmpty) {
-        log('FetchRequestEvent skipped: Data already initialized');
-        return;
-      }
+      // if (state.isInitialized && state.list.isNotEmpty) {
+      //   log('FetchRequestEvent skipped: Data already initialized');
+      //   return;
+      // }
 
       try {
         emit(state.copyWith(isLoading: true));

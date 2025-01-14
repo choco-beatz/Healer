@@ -6,40 +6,40 @@ import 'package:healer_therapist/view/therapist/client/widgets/client_detail.dar
 import 'package:healer_therapist/view/therapist/client/widgets/empty.dart';
 
 class ClientRequestsTab extends StatefulWidget {
-  const ClientRequestsTab({Key? key}) : super(key: key);
+  const ClientRequestsTab({super.key});
 
   @override
-  _ClientRequestsTabState createState() => _ClientRequestsTabState();
+  ClientRequestsTabState createState() => ClientRequestsTabState();
 }
 
-class _ClientRequestsTabState extends State<ClientRequestsTab>
+class ClientRequestsTabState extends State<ClientRequestsTab>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return BlocBuilder<TherapistBloc, TherapistState>(
       builder: (context, state) {
-        final clients = state.list;
+        final requests = state.list;
 
         
-        if (clients.isEmpty) {
+        if (requests.isEmpty) {
           return const Center(child: EmptyClient());
         }
         return ListView.builder(
-          itemCount: clients.length,
+          itemCount: requests.length,
           itemBuilder: (context, index) {
-            final client = clients[index].client;
+            final request = requests[index];
             return GestureDetector(
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ClientDetails(client: client),
+                  builder: (context) => ClientDetails(client: request.client),
                 ),
               ),
               child: ClientCard(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                client: client,
+                request: request,
               ),
             );
           },

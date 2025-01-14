@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/appointment/appointment_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
@@ -41,22 +39,19 @@ class AppointmentToday extends StatelessWidget {
                   "Today's Appointments",
                   style: smallXBold,
                 ),
-                Container(
+                ListView.builder(
                   
-                  child: ListView.builder(
-                    
-                    shrinkWrap: true,
-                    itemCount: todayAppointments.length,
-                    itemBuilder: (context, index) {
-                      final appointment = todayAppointments[index];
-                      return AppointmentClientCard(
-                          appointment: appointment,
-                          height: height,
-                          width: width);
-                    },
-                  ),
+                  shrinkWrap: true,
+                  itemCount: todayAppointments.length,
+                  itemBuilder: (context, index) {
+                    final appointment = todayAppointments[index];
+                    return AppointmentClientCard(
+                        appointment: appointment,
+                        height: height,
+                        width: width);
+                  },
                 ),
-                Divider(
+                const Divider(
                   color: fieldBG,
                 ),
               ],
@@ -64,7 +59,7 @@ class AppointmentToday extends StatelessWidget {
           } else {
             return SizedBox(
               height: height * 0.165,
-              child: Center(
+              child: const Center(
                 child: Text(
                   "No appointments today",
                   style: textFieldStyle,

@@ -66,7 +66,7 @@ class _AppoinmentState extends State<Appointment>
           bottom: TabBar(
             controller: tabController,
             dividerColor: white,
-            padding: EdgeInsets.only(left: 10, right: 10),
+            padding: const EdgeInsets.only(left: 10, right: 10),
             labelColor: white,
             labelPadding: const EdgeInsets.symmetric(
               horizontal: 0,

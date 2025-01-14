@@ -4,7 +4,6 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class SocketService {
   late IO.Socket _socket;
 
-  // Singleton pattern
   static final SocketService _instance = SocketService._internal();
   factory SocketService() => _instance;
   SocketService._internal();
@@ -24,16 +23,16 @@ class SocketService {
 
     // Handle connection events
     _socket.onConnect((_) {
-      print('✅ Connected to Socket.IO server as User: $userId');
+      print('Connected to Socket.IO server as User: $userId');
       emitJoinEvent(userId);
     });
 
     _socket.onDisconnect((_) {
-      print('⚠️ Disconnected from Socket.IO server');
+      print(' Disconnected from Socket.IO server');
     });
 
     _socket.onConnectError((error) {
-      print('❌ Connection Error: $error');
+      print('Connection Error: $error');
     });
 
     _socket.onError((error) {

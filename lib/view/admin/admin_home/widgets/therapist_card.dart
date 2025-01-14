@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/model/therapist/therapist_model.dart';
-import 'package:healer_therapist/view/admin/adminhome/widgets/more.dart';
+import 'package:healer_therapist/view/admin/admin_home/widgets/more.dart';
 import 'package:popover/popover.dart';
 
 class TherapistCard extends StatelessWidget {

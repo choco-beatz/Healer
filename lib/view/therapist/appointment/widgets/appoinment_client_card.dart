@@ -3,6 +3,7 @@ import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/model/appointment/appointment_model.dart';
+import 'package:intl/intl.dart';
 
 class AppointmentClientCard extends StatelessWidget {
   const AppointmentClientCard({
@@ -63,7 +64,12 @@ class AppointmentClientCard extends StatelessWidget {
                     ],
                   ),
                   smallSpace,
-                  Text(appointment.date, style: textFieldStyle),
+                  Text(
+                    DateFormat('dd MMM yyyy')
+                        .format(DateTime.parse(appointment.date))
+                        .toUpperCase(),
+                    style: textFieldStyle,
+                  ),
                   smallSpace,
                   Chip(
                     side: BorderSide.none,

@@ -6,8 +6,8 @@ import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 
 import 'package:healer_therapist/model/therapist/therapist_model.dart';
-import 'package:healer_therapist/view/admin/edittherapist/edit_therapist_screen.dart';
-import 'package:healer_therapist/view/admin/viewtherapist/widgets/buttons.dart';
+import 'package:healer_therapist/view/admin/edit_therapist/edit_therapist_screen.dart';
+import 'package:healer_therapist/view/admin/view_therapist/widgets/buttons.dart';
 import 'package:healer_therapist/widgets/dialog_button.dart';
 
 class ViewTherapist extends StatelessWidget {

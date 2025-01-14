@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/therapist/therapist_bloc.dart';
-import 'package:healer_therapist/services/socket/socket.dart';
+import 'package:healer_therapist/services/chat/socket.dart';
+import 'package:healer_therapist/view/therapist/chat/screens/message_screen.dart';
 import 'package:healer_therapist/view/therapist/chat/widgets/chat_card.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/client_detail.dart';
 import 'package:healer_therapist/view/therapist/client/widgets/empty.dart';
 import 'package:healer_therapist/widgets/appbar.dart';
 
@@ -18,7 +18,7 @@ class Chat extends StatelessWidget {
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: CommonAppBar(
-          title: 'Chat',
+          title: 'All Clients',
         ),
       ),
       body: BlocBuilder<TherapistBloc, TherapistState>(
@@ -37,7 +37,10 @@ class Chat extends StatelessWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ClientDetails(client: client),
+                    builder: (context) => ChatScreen(
+                      id: client.id,
+                      socketService: socketService,
+                    ),
                   ),
                 ),
                 child: ChatCard(

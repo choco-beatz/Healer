@@ -7,9 +7,9 @@ import 'package:healer_therapist/bloc/login/login_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/gradient.dart';
 import 'package:healer_therapist/services/login/login_service.dart';
-import 'package:healer_therapist/view/admin/adminhome/admin_homescreen.dart';
+import 'package:healer_therapist/view/admin/admin_home/admin_homescreen.dart';
 import 'package:healer_therapist/view/login/login_screen.dart';
-import 'package:healer_therapist/view/therapist/therapisthome/therapist_homescreen.dart';
+import 'package:healer_therapist/view/therapist/therapist_home/therapist_home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
