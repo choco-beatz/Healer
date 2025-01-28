@@ -5,7 +5,7 @@ import 'package:healer_therapist/constants/gradient.dart';
 Widget buildButton({required String text, bool imp = false}) {
   return Container(
     height: 42,
-    width: 160,
+    width: 150,
     decoration: BoxDecoration(
         gradient: imp == false ? gradient : redGradient,
         borderRadius: BorderRadius.circular(8)),

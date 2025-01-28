@@ -12,13 +12,18 @@ class SlotModel {
   factory SlotModel.fromJson(Map<String, dynamic> json) {
     return SlotModel(
       day: json['day'],
-      isActive: json['isActive'],
-      timeSlots: (json['timeSlots'] as List)
-          .map((timeSlot) => Slot.fromJson(timeSlot))
-          .toList(),
+      isActive: json['isActive'] ?? false,
+      timeSlots: (json['timeSlots'] as List?)
+              ?.map((timeSlot) => timeSlot != null
+                  ? Slot.fromJson(timeSlot as Map<String, dynamic>)
+                  : null)
+              .whereType<Slot>()
+              .toList() ??
+          [],
     );
   }
 }
+
 
 class Slot {
   final String startTime;

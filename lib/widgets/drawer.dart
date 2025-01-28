@@ -9,6 +9,7 @@ import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/view/login/login_screen.dart';
 import 'package:healer_therapist/widgets/about_us.dart';
 import 'package:healer_therapist/widgets/drawer_dialog.dart';
+import 'package:healer_therapist/widgets/term_and_condition.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({
@@ -78,15 +79,23 @@ class DrawerWidget extends StatelessWidget {
               ListTile(
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AboutUs()));
+                      MaterialPageRoute(builder: (context) => const AboutUs()));
                 },
                 leading: const Icon(Icons.info_outlined),
                 title: const Text('About Us'),
               ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const TermsAndConditions()));
+                },
+                leading: const Icon(Icons.assignment_outlined),
+                title: const Text('Terms and Conditions'),
+              ),
             ],
           ),
         ),
-        Text(
+        const Text(
           'Version: 1.0.0+1',
           style: lightText,
         ),

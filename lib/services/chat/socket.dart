@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:healer_therapist/constants/constant.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -23,34 +25,36 @@ class SocketService {
 
     // Handle connection events
     _socket.onConnect((_) {
-      print('Connected to Socket.IO server as User: $userId');
+      log('Connected to Socket.IO server as User: $userId');
       emitJoinEvent(userId);
     });
 
     _socket.onDisconnect((_) {
-      print(' Disconnected from Socket.IO server');
+      log(' Disconnected from Socket.IO server');
     });
 
     _socket.onConnectError((error) {
-      print('Connection Error: $error');
+      log('Connection Error: $error');
     });
 
     _socket.onError((error) {
-      print('❌ Socket Error: $error');
+      log('❌ Socket Error: $error');
     });
 
     _socket.onReconnect((_) {
-      print('🔄 Reconnected to Socket.IO server');
+      log('🔄 Reconnected to Socket.IO server');
     });
 
     _socket.onReconnectError((error) {
-      print('❌ Reconnection Error: $error');
+      log('❌ Reconnection Error: $error');
     });
 
     _socket.onReconnectFailed((_) {
-      print('❌ Reconnection Failed after max attempts');
+      log('❌ Reconnection Failed after max attempts');
     });
   }
+
+  
 
   /// Emit a 'join' event to register the user with the server
   void emitJoinEvent(String userId) {
@@ -58,19 +62,19 @@ class SocketService {
   }
 
   /// Emit an event with data
-  void emitEvent(String event, dynamic data) {
+  void emitEvent(String event, Map<String, dynamic> data) {
     if (_socket.connected) {
       _socket.emit(event, data);
-      print('📤 Event "$event" emitted with data: $data');
+      log('📤 Event "$event" emitted with data: $data');
     } else {
-      print('⚠️ Unable to emit event "$event": Socket is not connected.');
+      log('⚠️ Unable to emit event "$event": Socket is not connected.');
     }
   }
 
   /// Listen to a specific event
   void listenToEvent(String event, Function(dynamic) callback) {
     _socket.on(event, (data) {
-      print('📥 Event "$event" received with data: $data');
+      log('📥 Event "$event" received with data: $data');
       callback(data);
     });
   }
@@ -78,21 +82,21 @@ class SocketService {
   /// Remove a specific event listener
   void removeEventListener(String event) {
     _socket.off(event);
-    print('🚫 Event listener for "$event" removed');
+    log('🚫 Event listener for "$event" removed');
   }
 
   /// Disconnect the socket and clean up resources
   void disconnect() {
     if (_socket.connected) {
       _socket.disconnect();
-      print('🔌 Socket disconnected');
+      log('🔌 Socket disconnected');
     }
   }
 
   /// Dispose of the socket instance
   void dispose() {
     _socket.dispose();
-    print('🗑️ Socket instance disposed');
+    log('🗑️ Socket instance disposed');
   }
 
   /// Check if the socket is connected

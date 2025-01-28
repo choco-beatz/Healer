@@ -6,8 +6,9 @@ import 'package:healer_therapist/bloc/chat/chat_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/services/chat/socket.dart';
 import 'package:healer_therapist/services/token.dart';
+import 'package:healer_therapist/view/therapist/chat/widgets/chat_screen_app_bar.dart';
 import 'package:healer_therapist/view/therapist/chat/widgets/message_bubble.dart';
-import 'package:healer_therapist/widgets/appbar.dart';
+
 
 class Message {
   final String text;
@@ -24,15 +25,17 @@ class Message {
 }
 
 class ChatScreen extends StatefulWidget {
-  // final ClientModel client;
+  final String image;
+  final String name;
   final SocketService socketService;
   final String id;
 
   const ChatScreen({
     super.key,
-    // required this.client,
     required this.socketService,
     required this.id,
+    required this.image,
+    required this.name,
   });
 
   @override
@@ -114,50 +117,50 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
- @override
-Widget build(BuildContext context) {
-  return BlocListener<ChatBloc, ChatState>(
-    listener: (context, state) {
-      if (state is MessagesLoaded) {
-        // Add loaded messages to the list
-        setState(() {
-          _messages.addAll(state.messages.map((msg) => Message(
-                text: msg.text,
-                isSentByMe: msg.from == userId,
-                // mediaUrl: msg.mediaUrl,
-                timestamp: msg.createdAt,
-              )));
-        });
-        _scrollToBottom();
-      }
-    },
-    child: Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(50),
-        child: CommonAppBar(
-          title: 'Name',
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<ChatBloc, ChatState>(
+      listener: (context, state) {
+        if (state is MessagesLoaded) {
+          // Add loaded messages to the list
+          setState(() {
+            _messages.addAll(state.messages.map((msg) => Message(
+                  text: msg.text,
+                  isSentByMe: msg.from == userId,
+                  // mediaUrl: msg.mediaUrl,
+                  timestamp: msg.createdAt,
+                )));
+          });
+          _scrollToBottom();
+        }
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(80),
+          child: ChatAppBar(
+            title: widget.name,
+            image: widget.image,
+          ),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(8),
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  return MessageBubble(message: message);
+                },
+              ),
+            ),
+            _buildMessageInput(),
+          ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(8),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                return MessageBubble(message: message);
-              },
-            ),
-          ),
-          _buildMessageInput(),
-        ],
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildMessageInput() {
     return Container(
@@ -176,10 +179,7 @@ Widget build(BuildContext context) {
         children: [
           IconButton(
             icon: const Icon(Icons.attach_file),
-            onPressed: () {
-              // Implement media upload functionality
-              // You can use image_picker package for this
-            },
+            onPressed: () {},
           ),
           Expanded(
             child: TextField(

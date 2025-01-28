@@ -51,7 +51,6 @@ class _AppointmentRespondCardState extends State<AppointmentRespondCard> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                         padding: const EdgeInsets.only(left: 15),
@@ -76,20 +75,21 @@ class _AppointmentRespondCardState extends State<AppointmentRespondCard> {
                                       height: 80,
                                     ),
                                   ))),
-                    SizedBox(
-                      width: widget.width * 0.62,
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           smallSpace,
                           Text(widget.appointment.client.profile.name,
+                              overflow: TextOverflow.ellipsis,
                               style: smallBold),
                           smallSpace,
                           Text(
                             DateFormat('dd MMM yyyy')
                                 .format(DateTime.parse(widget.appointment.date))
                                 .toUpperCase(),
+                            overflow: TextOverflow.ellipsis,
                             style: textFieldStyle,
                           ),
                           smallSpace,

@@ -8,6 +8,7 @@ import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/view/therapist/appointment/widgets/add_slot.dart';
 import 'package:healer_therapist/view/therapist/appointment/widgets/week_day.dart';
 import 'package:healer_therapist/widgets/button.dart';
+import 'package:healer_therapist/widgets/loading.dart';
 
 class AppointmentScheduleTab extends StatefulWidget {
   const AppointmentScheduleTab({super.key});
@@ -26,6 +27,7 @@ class _AppointmentState extends State<AppointmentScheduleTab> {
     'Saturday',
     'Sunday',
   ];
+
   @override
   void initState() {
     super.initState();
@@ -37,20 +39,31 @@ class _AppointmentState extends State<AppointmentScheduleTab> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Expanded(
-              child: BlocBuilder<AppointmentBloc, AppointmentState>(
-                builder: (context, state) {
-                  final weeklySlots = state.weeklySlots;
-                  // final isActiveDays = state.isActiveDays;
+        child: BlocBuilder<AppointmentBloc, AppointmentState>(
+            builder: (context, state) {
+          if (state is AppointmentLoading) {
+            return const Loading();
+          } else if (state is AppointmentError) {
+            return Center(
+              child: Text(
+                state.message,
+                style: const TextStyle(color: red),
+              ),
+            );
+          } else if (state is AppointmentLoaded) {
+            final weeklySlots = state.weeklySlots;
+            final isActiveDays = state.isActiveDays;
 
-                  return ListView.builder(
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
                     itemCount: allWeekdays.length,
                     itemBuilder: (context, index) {
                       String day = allWeekdays[index];
-                      final slots = state.weeklySlots[day] ?? [];
-                      final isActive = state.isActiveDays[day] ?? false;
+                      final slots = weeklySlots[day] ?? [];
+                      final isActive = isActiveDays[day] ?? false;
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -84,7 +97,6 @@ class _AppointmentState extends State<AppointmentScheduleTab> {
                                   child: ListView(
                                     scrollDirection: Axis.horizontal,
                                     children: slots.map((slot) {
-                                      // log(slot.toString());
                                       var times =
                                           '${slot['startTime']}-${slot['endTime']}';
                                       return Padding(
@@ -98,7 +110,6 @@ class _AppointmentState extends State<AppointmentScheduleTab> {
                                               style: colorTextStyle),
                                           deleteIconColor: main1trans,
                                           onDeleted: () {
-                                            // log('delete $times');
                                             var splitTimes = times.split('-');
                                             context.read<AppointmentBloc>().add(
                                                   RemoveTimeSlotEvent(
@@ -128,26 +139,26 @@ class _AppointmentState extends State<AppointmentScheduleTab> {
                         ],
                       );
                     },
-                  );
-                },
-              ),
-            ),
-            BlocBuilder<AppointmentBloc, AppointmentState>(
-              builder: (context, state) {
-                return InkWell(
-                    onTap: () {
-                      if (state.hasChanges) {
-                        context.read<AppointmentBloc>().add(SubmitSlotsEvent());
-                      }
-                    },
-                    child: Button(
-                      text: 'Apply',
-                      deActivate: state.hasChanges == false ? true : false,
-                    ));
-              },
-            )
-          ],
-        ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (state.hasChanges) {
+                      context.read<AppointmentBloc>().add(SubmitSlotsEvent());
+                    }
+                  },
+                  child: Button(
+                    text: 'Apply',
+                    deActivate: state.hasChanges == false ? true : false,
+                  ),
+                ),
+              ],
+            );
+          } else {
+            context.read<AppointmentBloc>().add(FetchSlotsEvent());
+            return const Loading();
+          }
+        }),
       ),
     );
   }

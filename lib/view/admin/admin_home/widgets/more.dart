@@ -69,6 +69,7 @@ class More extends StatelessWidget {
                       ),
                       actions: [
                         GestureDetector(
+                          
                             onTap: () {
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();

@@ -3,13 +3,6 @@ part of 'admin_bloc.dart';
 
 class AdminEvent {}
 
-// class LoginEvent extends AdminEvent {
-//   LoginModel data;
-//   LoginEvent({
-//     required this.data,
-//   });
-// }
-
 class CkeckTokenEvent extends AdminEvent {}
 
 class FetchTherapistEvent extends AdminEvent {}

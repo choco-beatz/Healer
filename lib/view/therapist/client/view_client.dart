@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/therapist/therapist_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/client_request_tab.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/ongoing_client_tab.dart';
+import 'package:healer_therapist/view/therapist/client/screens/client_request_tab.dart';
+import 'package:healer_therapist/view/therapist/client/screens/ongoing_client_tab.dart';
 
 class ViewClient extends StatefulWidget {
   const ViewClient({super.key});
@@ -20,8 +20,8 @@ class _ViewClientState extends State<ViewClient>
   @override
   void initState() {
     super.initState();
-    context.read<TherapistBloc>().add(OnGoingClientEvent());
-    context.read<TherapistBloc>().add(FetchRequestEvent());
+    // context.read<TherapistBloc>().add(OnGoingClientEvent());
+    // context.read<TherapistBloc>().add(FetchRequestEvent());
     tabController = TabController(length: 2, vsync: this);
     tabController.addListener(() {
       if (!tabController.indexIsChanging) {
@@ -29,21 +29,22 @@ class _ViewClientState extends State<ViewClient>
         if (mounted) {
           switch (tabController.index) {
             case 0:
-              context.read<TherapistBloc>().add(OnGoingClientEvent());
+              Future.microtask(() =>
+                  context.read<TherapistBloc>().add(OnGoingClientEvent()));
 
               break;
             case 1:
-              context.read<TherapistBloc>().add(FetchRequestEvent());
+              // context.read<TherapistBloc>().add(FetchRequestEvent());
               break;
           }
         }
       }
     });
-    // context.read<ClientBloc>().add(FetchClientEvent());
+    Future.microtask(
+        () => context.read<TherapistBloc>().add(OnGoingClientEvent()));
   }
 
   @override
-
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
@@ -51,7 +52,7 @@ class _ViewClientState extends State<ViewClient>
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Therapists',
+            'Clients',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
           leading: GestureDetector(
@@ -74,9 +75,15 @@ class _ViewClientState extends State<ViewClient>
         ),
         body: TabBarView(
           controller: tabController,
-          children: const [
-            OnGoingClientsTab(),
-            ClientRequestsTab(),
+          children: [
+            BlocProvider(
+              create: (context) => TherapistBloc()..add(OnGoingClientEvent()),
+              child: const OnGoingClientsTab(),
+            ),
+            BlocProvider(
+              create: (context) => TherapistBloc()..add(FetchRequestEvent()),
+              child: const ClientRequestsTab(),
+            ),
           ],
         ),
       ),

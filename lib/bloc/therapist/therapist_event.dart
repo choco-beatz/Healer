@@ -4,6 +4,8 @@ class TherapistEvent {}
 
 class FetchRequestEvent extends TherapistEvent {}
 
+class GetProfileEvent extends TherapistEvent {}
+
 class OnGoingClientEvent extends TherapistEvent {}
 
 class RequestRespondEvent extends TherapistEvent {

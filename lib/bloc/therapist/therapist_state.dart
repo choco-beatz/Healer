@@ -1,48 +1,34 @@
 part of 'therapist_bloc.dart';
 
-class TherapistState {
+abstract class TherapistState {}
+
+class TherapistInitial extends TherapistState {}
+
+class ClientLoading extends TherapistState {}
+
+class ClientLoaded extends TherapistState {
   final List<RequestModel> list;
-  final bool isLoading;
-  final bool isInitialized;
-  final bool isSuccess;
-  final bool hasError;
-  final int requestCode;
-  final Map<String, String> requestStatus;
-  final String message;
-
-  TherapistState({
-    this.list = const [],
-    this.isLoading = false,
-    this.isInitialized = false,
-    this.requestCode = 0,
-    this.isSuccess = false,
-    this.hasError = false,
-    this.requestStatus = const {},
-    this.message = '',
-  });
-
-  TherapistState copyWith({
-    List<RequestModel>? list,
-    bool? isLoading,
-    bool? isInitialized,
-    bool? isSuccess,
-    int? requestCode,
-    bool? hasError,
-    Set<String>? requestedTherapists,
-    Map<String, String>? requestStatus,
-    String? message,
-  }) {
-    return TherapistState(
-      requestCode: requestCode ?? this.requestCode,
-      list: list ?? this.list,
-      isLoading: isLoading ?? this.isLoading,
-      isInitialized: isInitialized ?? this.isInitialized,
-      isSuccess: isSuccess ?? this.isSuccess,
-      hasError: hasError ?? this.hasError,
-      requestStatus: requestStatus ?? this.requestStatus,
-      message: message ?? this.message,
-    );
-  }
+  ClientLoaded({required this.list});
 }
 
-final class TherapistInitial extends TherapistState {}
+class ClientError extends TherapistState {
+  final String message;
+  ClientError({required this.message});
+}
+
+class TherapistProfileLoading extends TherapistState {}
+
+class TherapistProfileLoaded extends TherapistState {
+  final UserModel therapist;
+  TherapistProfileLoaded({required this.therapist});
+}
+
+class TherapistProfileError extends TherapistState {
+  final String message;
+  TherapistProfileError({required this.message});
+}
+
+class TherapistRequestStatusUpdated extends TherapistState {
+  final Map<String, String> requestStatus;
+  TherapistRequestStatusUpdated({required this.requestStatus});
+}

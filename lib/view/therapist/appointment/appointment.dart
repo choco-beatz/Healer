@@ -38,6 +38,9 @@ class _AppoinmentState extends State<Appointment>
               // context.read<TherapistBloc>().add(FetchRequestEvent());
               break;
             case 2:
+              // context.read<TherapistBloc>().add(FetchRequestEvent());
+              break;
+            case 3:
               context.read<AppointmentBloc>().add(FetchSlotsEvent());
               break;
           }

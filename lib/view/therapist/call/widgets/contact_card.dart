@@ -10,11 +10,12 @@ class ContactCard extends StatelessWidget {
     required this.height,
     required this.width,
     required this.onCall,
-    required this.onVideoCall,
+    required this.onVideoCall, required this.onDetails,
   });
 
   final double height;
   final double width;
+  final VoidCallback onDetails;
   final ClientModel client;
   final VoidCallback onCall;
   final VoidCallback onVideoCall;

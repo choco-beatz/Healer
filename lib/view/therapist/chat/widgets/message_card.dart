@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/space.dart';
@@ -15,11 +13,13 @@ class MessageCard extends StatelessWidget {
     required this.image,
     required this.lastMessage,
     required this.name,
+    required this.time,
   });
 
   final String image;
   final String lastMessage;
   final String name;
+  final String time;
   final double height;
   final double width;
   final SocketService socketService;
@@ -61,7 +61,26 @@ class MessageCard extends StatelessWidget {
                     children: [
                       Text(name, style: smallBold),
                       smallSpace,
-                      Text(lastMessage, style: textFieldStyle),
+                      SizedBox(
+                        width: width * 0.7,
+                        child: Row(
+                          // mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                lastMessage,
+                                style: textFieldStyle,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            hSpace,
+                            Text(
+                              time,
+                              style: boldTextFieldStyle,
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

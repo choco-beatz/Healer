@@ -15,7 +15,7 @@ Future<bool> updateSlots(Map<String, dynamic> payload) async {
       'POST',
       body: jsonEncode(payload),
     );
-    log('Response: ${response!.statusCode.toString()}');
+    log('Responseeee: ${response!.statusCode.toString()}');
     log('Response: ${response.body.toString()}');
     return true;
   } catch (e) {
@@ -51,7 +51,16 @@ Future<List<SlotModel>> fetchSlots() async {
   try {
     log('Response: ${response.body}');
     final data = jsonDecode(response.body) as List<dynamic>;
-    final slots = data.map((json) => SlotModel.fromJson(json)).toList();
+
+    final slots = data.map((json) {
+      if (json is Map<String, dynamic>) {
+        return SlotModel.fromJson(json);
+      } else {
+        log('Unexpected data format: $json');
+        throw FormatException('Invalid slot format');
+      }
+    }).toList();
+
     return slots;
   } catch (e) {
     log('Error parsing slots: $e');
@@ -63,7 +72,7 @@ Future<List<AppointmentModel>> slotStatus(String status) async {
   final response = await makeRequest('$slotStatusUrl$status', 'GET');
 
   if (response == null || response.statusCode != 200) return [];
-
+  
   try {
     final dynamic decodedData = jsonDecode(response.body);
 
@@ -74,7 +83,7 @@ Future<List<AppointmentModel>> slotStatus(String status) async {
         .map((item) => AppointmentModel.fromJson(item))
         .toList();
   } catch (e) {
-    log('Error parsing slots data: $e');
+    log('Error parsing sssslots data: $e');
     return [];
   }
 }

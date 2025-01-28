@@ -1,62 +1,76 @@
+class UserResponse {
+  final UserModel user;
+
+  UserResponse({
+    required this.user,
+  });
+
+  factory UserResponse.fromJson(Map<String, dynamic> json) {
+    // Safely access the user object
+    final userJson = json["user"];
+    if (userJson == null) {
+      throw Exception('User data is null');
+    }
+    return UserResponse(
+      user: UserModel.fromJson(userJson as Map<String, dynamic>),
+    );
+  }
+}
+
 class UserModel {
-  String id;
-  String email;
-  String role;
-  String profileModel;
-  String image;
-  bool isVerified;
-  DateTime createdAt;
-  DateTime updatedAt;
-  TherapistProfile profile;
+  final String id;
+  final String email;
+  final String role;
+  final TherapistProfile profile; // Made nullable
+  final String profileModel;
+  final String image;
+  final bool isVerified;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int v;
 
   UserModel({
     required this.id,
     required this.email,
     required this.role,
+    required this.profile, // No longer required
     required this.profileModel,
     required this.image,
     required this.isVerified,
     required this.createdAt,
     required this.updatedAt,
-    required this.profile,
+    required this.v,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    // Safely handle the profile data
+    final profileData = json["profile"];
     return UserModel(
-      id: json["_id"],
-      email: json["email"],
-      role: json["role"],
-      profileModel: json["profileModel"],
-      image: json["image"],
-      isVerified: json["isVerified"],
-      createdAt: DateTime.parse(json["createdAt"]),
-      updatedAt: DateTime.parse(json["updatedAt"]),
-      profile: TherapistProfile.fromJson(json["profile"]),
+      id: json["_id"] ?? '',
+      email: json["email"] ?? '',
+      role: json["role"] ?? '',
+      profile: TherapistProfile.fromJson(profileData as Map<String, dynamic>),
+      // Return null if no profile data
+      profileModel: json["profileModel"] ?? '',
+      image: json["image"] ?? '',
+      isVerified: json["isVerified"] ?? false,
+      createdAt:
+          DateTime.parse(json["createdAt"] ?? DateTime.now().toIso8601String()),
+      updatedAt:
+          DateTime.parse(json["updatedAt"] ?? DateTime.now().toIso8601String()),
+      v: json["__v"] ?? 0,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "_id": id,
-      "email": email,
-      "role": role,
-      "profileModel": profileModel,
-      "image": image,
-      "isVerified": isVerified,
-      "createdAt": createdAt.toIso8601String(),
-      "updatedAt": updatedAt.toIso8601String(),
-      "profile": profile.toJson(),
-    };
   }
 }
 
 class TherapistProfile {
-  String id;
-  String name;
-  String qualification;
-  String specialization;
-  int experience;
-  String bio;
+  final String id;
+  final String name;
+  final String qualification;
+  final String specialization;
+  final int experience;
+  final String bio;
+  final int v;
 
   TherapistProfile({
     required this.id,
@@ -65,27 +79,18 @@ class TherapistProfile {
     required this.specialization,
     required this.experience,
     required this.bio,
+    required this.v,
   });
 
   factory TherapistProfile.fromJson(Map<String, dynamic> json) {
     return TherapistProfile(
-      id: json["_id"],
-      name: json["name"],
-      qualification: json["qualification"],
-      specialization: json["specialization"],
-      experience: json["experience"],
-      bio: json["bio"],
+      id: json["_id"] ?? '',
+      name: json["name"] ?? '',
+      qualification: json["qualification"] ?? '',
+      specialization: json["specialization"] ?? '',
+      experience: json["experience"] ?? 0,
+      bio: json["bio"] ?? '',
+      v: json["__v"] ?? 0,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "_id": id,
-      "name": name,
-      "qualification": qualification,
-      "specialization": specialization,
-      "experience": experience,
-      "bio": bio,
-    };
   }
 }

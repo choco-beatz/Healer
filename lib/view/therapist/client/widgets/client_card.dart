@@ -22,9 +22,14 @@ class ClientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requestStatus = context.select<TherapistBloc, String?>(
-      (bloc) => bloc.state.requestStatus[request.id],
-    );
+    final requestStatus = context.select<TherapistBloc, String?>((bloc) {
+  final state = bloc.state;
+  if (state is TherapistRequestStatusUpdated) {
+    return state.requestStatus[request.id];
+  }
+  return null;
+});
+
     if (requestStatus == "Accepted" || requestStatus == "Declined") {
       // Display status message
       return Padding(

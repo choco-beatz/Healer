@@ -3,11 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/chat/chat_bloc.dart';
 import 'package:healer_therapist/bloc/therapist/therapist_bloc.dart';
 import 'package:healer_therapist/services/chat/socket.dart';
-import 'package:healer_therapist/view/therapist/chat/screens/chat.dart';
+import 'package:healer_therapist/view/therapist/chat/screens/contacts.dart';
 import 'package:healer_therapist/view/therapist/chat/widgets/message_card.dart';
 import 'package:healer_therapist/widgets/floating_button.dart';
 import 'package:healer_therapist/view/therapist/chat/screens/message_screen.dart';
 import 'package:healer_therapist/widgets/appbar.dart';
+import 'package:intl/intl.dart';
 
 class Inbox extends StatelessWidget {
   final SocketService socketService;
@@ -38,7 +39,7 @@ class Inbox extends StatelessWidget {
               itemCount: chats.length,
               itemBuilder: (context, index) {
                 final chat = chats[index];
-                final participant = chat.participants.last;
+                final participant = chat.participants.first;
                 final lastMessageText = chat.lastMessage.text;
                 return InkWell(
                   onTap: () {
@@ -49,6 +50,8 @@ class Inbox extends StatelessWidget {
                                 create: (context) =>
                                     ChatBloc()..add(LoadMessagesEvent(chat.id)),
                                 child: ChatScreen(
+                                  name: participant.profile.name,
+                                  image: participant.image,
                                   id: chat.lastMessage.to,
                                   socketService: socketService,
                                 ))));
@@ -59,6 +62,8 @@ class Inbox extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                     lastMessage: lastMessageText,
                     name:participant.profile.name,
+                    time: DateFormat('hh:mm a')
+                        .format(chat.lastMessage.createdAt),
                     image: participant.image,
                   ),
                 );
@@ -79,7 +84,7 @@ class Inbox extends StatelessWidget {
               builder: (context) => BlocProvider(
                     create: (context) =>
                         TherapistBloc()..add(OnGoingClientEvent()),
-                    child: Chat(
+                    child: Contact(
                       socketService: socketService,
                     ),
                   )),

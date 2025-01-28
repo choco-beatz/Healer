@@ -1,85 +1,66 @@
 part of 'appointment_bloc.dart';
 
-class AppointmentState {
-  final Map<String, List<Map<String, dynamic>>> weeklySlots;
-  final bool hasChanges;
-  final List<AppointmentModel> appointments;
-  final Map<String, bool> isActiveDays;
-  final bool isSubmitting;
-  final bool isLoading;
-  final bool hasError;
-  final String responseStatus;
-  final bool isSuccess;
+abstract class AppointmentState {
+  final String? responseStatus;
 
-  AppointmentState({
-    this.weeklySlots = const {
-      "Monday": [],
-      "Tuesday": [],
-      "Wednesday": [],
-      "Thursday": [],
-      "Friday": [],
-      "Saturday": [],
-      "Sunday": [],
-    },
-    this.hasChanges = false,
-    this.appointments = const [],
-    this.isSubmitting = false,
-    this.hasError = false,
-    this.responseStatus = '',
-    this.isLoading = false,
-    this.isSuccess = false,
-    this.isActiveDays = const {
-      "Monday": false,
-      "Tuesday": false,
-      "Wednesday": false,
-      "Thursday": false,
-      "Friday": false,
-      "Saturday": false,
-      "Sunday": false,
-    },
-  });
-
-  AppointmentState copyWith({
-    Map<String, List<Map<String, dynamic>>>? weeklySlots,
-    bool? hasChanges,
-    bool? isSubmitting,
-    List<AppointmentModel>? appointments,
-    bool? isLoading,
-    bool? hasError,
-    String? responseStatus,
-    bool? isSuccess,
-    Map<String, bool>? isActiveDays,
-  }) {
-    return AppointmentState(
-      weeklySlots: weeklySlots ?? this.weeklySlots,
-      isSubmitting: isSubmitting ?? this.isSubmitting,
-      hasChanges: hasChanges ?? this.hasChanges,
-      hasError: hasError ?? this.hasError,
-      responseStatus: responseStatus ?? this.responseStatus,
-      isLoading: isLoading ?? this.isLoading,
-      appointments: appointments ?? this.appointments,
-      isSuccess: isSuccess ?? this.isSuccess,
-      isActiveDays: isActiveDays ?? this.isActiveDays,
-    );
-  }
+  AppointmentState({this.responseStatus});
 }
 
-class AppointmentLoadingState extends AppointmentState {}
+class AppointmentInitial extends AppointmentState {}
 
-class AppointmentLoadedState extends AppointmentState {
+class AppointmentLoading extends AppointmentState {}
+
+class AppointmentLoaded extends AppointmentState {
   final Map<String, List<Map<String, dynamic>>> weeklySlots;
   final Map<String, bool> isActiveDays;
+  final bool hasChanges;
 
-  AppointmentLoadedState({
+  AppointmentLoaded({
     required this.weeklySlots,
     required this.isActiveDays,
+    this.hasChanges = false,
+    super.responseStatus,
   });
 }
 
-class AppointmentErrorState extends AppointmentState {
+class AppointmentError extends AppointmentState {
   final String message;
 
-  AppointmentErrorState(this.message);
+  AppointmentError({required this.message});
 }
 
-final class AppointmentInitial extends AppointmentState {}
+class AppointmentSubmitting extends AppointmentState {
+  final Map<String, List<Map<String, dynamic>>> weeklySlots;
+  final Map<String, bool> isActiveDays;
+
+  AppointmentSubmitting({
+    required this.weeklySlots,
+    required this.isActiveDays,
+    super.responseStatus
+  });
+}
+
+class AppointmentSuccess extends AppointmentState {
+  final String message;
+
+  AppointmentSuccess({required this.message})
+      : super(responseStatus: 'success');
+}
+
+class AppointmentFailure extends AppointmentState {
+  final String error;
+
+  AppointmentFailure({required this.error})
+      : super(responseStatus: 'error');
+}
+
+class AppointmentSuccessState extends AppointmentState {
+  final List<AppointmentModel> appointments;
+  final bool hasChanges;
+
+  AppointmentSuccessState({
+    required this.appointments,
+    String? responseStatus,
+    required this.hasChanges,
+  }) : super(responseStatus: responseStatus ?? 'success');
+}

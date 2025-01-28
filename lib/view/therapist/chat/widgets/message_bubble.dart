@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/gradient.dart';
 import 'package:healer_therapist/view/therapist/chat/screens/message_screen.dart';
+import 'package:intl/intl.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;
@@ -64,7 +65,7 @@ class MessageBubble extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
+               DateFormat('h:mm a').format(message.timestamp),
               style: TextStyle(
                 fontSize: 12,
                 color: message.isSentByMe ? white : black,

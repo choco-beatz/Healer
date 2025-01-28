@@ -39,7 +39,7 @@ class _AudioCallPageState extends State<AudioCallPage> {
 
   Future<void> _startAudioCall() async {
     await widget.agoraService.joinAudioCall(
-      widget.channelId,
+      channel,
       uid,
       token, 
     );
