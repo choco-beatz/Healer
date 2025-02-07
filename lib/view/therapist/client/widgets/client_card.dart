@@ -23,148 +23,114 @@ class ClientCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final requestStatus = context.select<TherapistBloc, String?>((bloc) {
-  final state = bloc.state;
-  if (state is TherapistRequestStatusUpdated) {
-    return state.requestStatus[request.id];
-  }
-  return null;
-});
-
-    if (requestStatus == "Accepted" || requestStatus == "Declined") {
-      // Display status message
-      return Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: Card(
-          color: white,
-          child: SizedBox(
-              height: height * 0.16,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Padding(
-                      padding: const EdgeInsets.only(left: 15),
-                      child: CircleAvatar(
-                          backgroundColor: transparent,
-                          radius: width * 0.125,
-                          child: (request.client.image.split('.').last == 'png')
-                              ? Image.network(
-                                  fit: BoxFit.fitHeight,
-                                  request.client.image,
-                                  width: 90,
-                                  height: 90,
-                                )
-                              : ClipOval(
-                                  child: Image.network(
-                                    fit: BoxFit.fitHeight,
-                                    request.client.image,
-                                    width: 90,
-                                    height: 90,
-                                  ),
-                                ))),
-                  SizedBox(
-                    width: width * 0.55,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(request.client.profile.name, style: smallBold),
-                        smallSpace,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              height: 45,
-                              width: 215,
-                              decoration: BoxDecoration(
-                                  gradient: requestStatus == "Accepted"
-                                      ? gradient
-                                      : redGradient,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Center(
-                                child: Text(
-                                  requestStatus!,
-                                  style: const TextStyle(
-                                      color: white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )),
-        ),
-      );
-    }
+      final state = bloc.state;
+      if (state is TherapistRequestStatusUpdated) {
+        return state.requestStatus[request.id];
+      }
+      return null;
+    });
 
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Card(
-        color: white,
-        child: SizedBox(
-            height: height * 0.16,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: CircleAvatar(
-                        backgroundColor: transparent,
-                        radius: width * 0.125,
-                        child: (request.client.image.split('.').last == 'png')
-                            ? Image.network(
-                                fit: BoxFit.fitHeight,
-                                request.client.image,
-                                width: 90,
-                                height: 90,
-                              )
-                            : ClipOval(
-                                child: Image.network(
-                                  fit: BoxFit.fitHeight,
-                                  request.client.image,
-                                  width: 90,
-                                  height: 90,
-                                ),
-                              ))),
-                SizedBox(
-                  width: width * 0.55,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(request.client.profile.name, style: smallBold),
-                      smallSpace,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                              onTap: () {
-                                context.read<TherapistBloc>().add(
-                                    RequestRespondEvent(
-                                        requestId: request.id,
-                                        status: "Accepted"));
-                              },
-                              child: buildButton(text: 'Accept')),
-                          InkWell(
-                              onTap: () {
-                                context.read<TherapistBloc>().add(
-                                    RequestRespondEvent(
-                                        requestId: request.id,
-                                        status: "Declined"));
-                              },
-                              child: buildButton(text: 'Decline', imp: true)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )),
+      padding: const EdgeInsets.all(8.0),
+      child: Stack(children: [
+        _buildBackgroundImage(),
+        _buildGradientOverlay(context, requestStatus),
+      ]),
+    );
+  }
+
+  Widget _buildBackgroundImage() {
+    return Container(
+      height: height * 0.25,
+      width: width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        image: DecorationImage(
+          image: NetworkImage(request.client.image),
+          fit: BoxFit.cover,
+          onError: (error, stackTrace) {},
+        ),
       ),
+    );
+  }
+
+  Widget _buildGradientOverlay(BuildContext context, String? requestStatus) {
+    return Container(
+      height: height * 0.25,
+      width: width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [transparent, black.withOpacity(0.7)],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              request.client.profile.name,
+              style: buttonText,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Spacer(),
+            requestStatus == "Accepted" || requestStatus == "Declined"
+                ? _buildStatusText(requestStatus!)
+                : _buildActionButtons(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusText(String status) {
+    return Container(
+      height: 45,
+      width: 215,
+      decoration: BoxDecoration(
+        gradient: status == "Accepted" ? gradient : redGradient,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: Text(
+          status,
+          style: const TextStyle(
+              color: white, fontSize: 20, fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+  }
+
+  /// Builds the Accept and Decline buttons for pending requests.
+  Widget _buildActionButtons(BuildContext context) {
+    return Row(
+      children: [
+        InkWell(
+          onTap: () {
+            context.read<TherapistBloc>().add(
+                  RequestRespondEvent(
+                      requestId: request.id, status: "Accepted"),
+                );
+            context.read<TherapistBloc>().add(OnGoingClientEvent());
+          },
+          child: buildButton(text: 'Accept'),
+        ),
+        hSpace,
+        InkWell(
+          onTap: () {
+            context.read<TherapistBloc>().add(
+                  RequestRespondEvent(
+                      requestId: request.id, status: "Declined"),
+                );
+                context.read<TherapistBloc>().add(OnGoingClientEvent());
+          },
+          child: buildButton(text: 'Decline', imp: true),
+        ),
+      ],
     );
   }
 }

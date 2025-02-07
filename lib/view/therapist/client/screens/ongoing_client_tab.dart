@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/therapist/therapist_bloc.dart';
 import 'package:healer_therapist/view/therapist/client/widgets/client_card_ongoing.dart';
 import 'package:healer_therapist/view/therapist/client/widgets/client_detail.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/empty.dart';
+import 'package:healer_therapist/widgets/empty.dart';
 import 'package:healer_therapist/widgets/loading.dart';
 
 class OnGoingClientsTab extends StatefulWidget {
@@ -25,7 +25,11 @@ class OnGoingClientsTabState extends State<OnGoingClientsTab>
         } else if (state is ClientLoaded) {
           final clients = state.list;
           if (clients.isEmpty) {
-            return const Center(child: EmptyClient());
+            return const Empty(
+              title: "No Ongoing Clients",
+              subtitle: "Once you start working with clients, their details will appear here.",
+              image: "asset/emptyOngoing.jpg",
+            );
           }
           return ListView.builder(
             itemCount: clients.length,
@@ -49,7 +53,11 @@ class OnGoingClientsTabState extends State<OnGoingClientsTab>
         } else if (state is ClientError) {
           return Center(child: Text(state.message));
         } else {
-          return const Center(child: Text('No data available.'));
+          return const Empty(
+              title: "No Ongoing Clients",
+              subtitle: "Once you start working with clients, their details will appear here.",
+              image: "asset/emptyOngoing.jpg",
+            );
         }
       },
     );

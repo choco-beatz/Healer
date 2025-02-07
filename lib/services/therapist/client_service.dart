@@ -31,7 +31,7 @@ Future<List<RequestModel>> onGoingClient() async {
   if (response == null || response.statusCode != 200) return [];
 
   try {
-    // log(response.body);
+    log(response.body);
     final data = jsonDecode(response.body) as Map<String, dynamic>;
 
     final requests = data['requests'];
@@ -40,9 +40,9 @@ Future<List<RequestModel>> onGoingClient() async {
       return [];
     }
 
-    // Map over the requests list and return a list of RequestModel
+    
     return requests.map<RequestModel>((item) {
-      return RequestModel.fromJson(item); // Correctly parse RequestModel
+      return RequestModel.fromJson(item); 
     }).toList();
   } catch (e) {
     log('Error parsing client list: $e');

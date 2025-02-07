@@ -98,6 +98,13 @@ class AddTherapist extends StatelessWidget {
                               ),
                               space,
                               buildTextFormField(
+                                  label: ' Bio',
+                                  controller: bioController,
+                                  
+                                  hint: 'Enter the Bio',
+                                  isMultiline: true),
+                              space,
+                              buildTextFormField(
                                   label: ' Qualification',
                                   controller: qualificationController,
                                   validator: (value) =>
@@ -107,6 +114,7 @@ class AddTherapist extends StatelessWidget {
                                   hint: 'Enter the qualification',
                                   isMultiline: true),
                               space,
+                              
                               buildTextFormField(
                                   label: ' Specialization',
                                   controller: specializationController,
@@ -145,7 +153,7 @@ class AddTherapist extends StatelessWidget {
                                     return null;
                                   },
                                   decoration: textField('Enter the password'),
-                                  cursorColor: Colors.black26,
+                                  cursorColor:textColor,
                                   style: textFieldStyle),
                               space,
                             ])))),

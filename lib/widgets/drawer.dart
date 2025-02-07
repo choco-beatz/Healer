@@ -8,7 +8,8 @@ import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/view/login/login_screen.dart';
 import 'package:healer_therapist/widgets/about_us.dart';
-import 'package:healer_therapist/widgets/drawer_dialog.dart';
+import 'package:healer_therapist/widgets/dialog_button.dart';
+import 'package:healer_therapist/widgets/privacy_policy.dart';
 import 'package:healer_therapist/widgets/term_and_condition.dart';
 
 class DrawerWidget extends StatelessWidget {
@@ -26,30 +27,58 @@ class DrawerWidget extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                height: 170,
+                height: 150,
                 width: width,
                 decoration: const BoxDecoration(gradient: gradient),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
                     Positioned(
-                        top: -120,
-                        left: -80,
-                        child: Opacity(
-                            opacity: 0.45,
-                            child: Image.asset(
-                                height: 350, 'asset/treatment.png'))),
-                    Positioned(
-                      top: 100,
-                      left: 145,
+                      top: 50,
+                      left: 100,
                       child: Text('Healer',
                           style: GoogleFonts.satisfy(
                             textStyle:
-                                const TextStyle(color: white, fontSize: 50),
+                                const TextStyle(color: white, fontSize: 70),
                           )),
                     )
                   ],
                 ),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const PrivacyPolicy()));
+                },
+                leading: const Icon(
+                  Icons.lock_outline_rounded,
+                  color: main1,
+                ),
+                title: const Text('Privacy policy'),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const AboutUs()));
+                },
+                leading: const Icon(
+                  Icons.info_outlined,
+                  color: main1,
+                ),
+                title: const Text('About Us'),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const TermsAndConditions()));
+                },
+                leading: const Icon(
+                  Icons.assignment_outlined,
+                  color: main1,
+                ),
+                title: const Text('Terms and Conditions'),
               ),
               BlocListener<LoginBloc, LoginState>(
                   listener: (context, state) {
@@ -60,38 +89,47 @@ class DrawerWidget extends StatelessWidget {
                   },
                   child: ListTile(
                     onTap: () {
-                      context.read<LoginBloc>().add(LogOutEvent());
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text(
+                              "Log out?",
+                              style: semiBold,
+                            ),
+                            content: const Text(
+                              "Logging out? Stay safe!",
+                              style: colorTextStyle,
+                            ),
+                            actions: [
+                              GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: buildButton(text: 'Cancel')),
+                              GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    context
+                                        .read<LoginBloc>()
+                                        .add(LogOutEvent());
+                                  },
+                                  child:
+                                      buildButton(text: 'Log Out', imp: true)),
+                            ],
+                          );
+                        },
+                      );
                     },
-                    leading: const Icon(Icons.logout_outlined),
-                    title: const Text("Log out"),
+                    leading: const Icon(
+                      Icons.logout_outlined,
+                      color: red,
+                    ),
+                    title: const Text(
+                      "Log out",
+                      style: TextStyle(color: red),
+                    ),
                   )),
-              ListTile(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return DrawerDialoge(mdFileName: 'privacypolicy.md');
-                      });
-                },
-                leading: const Icon(Icons.lock_outline_rounded),
-                title: const Text('Privacy policy'),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const AboutUs()));
-                },
-                leading: const Icon(Icons.info_outlined),
-                title: const Text('About Us'),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const TermsAndConditions()));
-                },
-                leading: const Icon(Icons.assignment_outlined),
-                title: const Text('Terms and Conditions'),
-              ),
             ],
           ),
         ),

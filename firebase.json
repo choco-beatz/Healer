@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "healer-for-therapist-9c681-fd5c2",
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

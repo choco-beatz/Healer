@@ -7,12 +7,12 @@ class Welcome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
+    return Column(
       children: [
-        const Text('Welcome', style: bigBold),
-                    space,
-                    Image.asset(height: 100, 'asset/welcome.png'),
-                    space,
+        Image.asset(height: 200, 'asset/treatment.png'),
+        const Text('Welcome Back', style: bigBold),
+        space,
+        space
       ],
     );
   }

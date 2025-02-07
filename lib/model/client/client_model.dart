@@ -1,24 +1,21 @@
 class RequestsResponse {
   final List<RequestModel> requests;
-
   RequestsResponse({
     required this.requests,
   });
-
   factory RequestsResponse.fromJson(Map<String, dynamic> json) {
     try {
       var requestsList = json['requests'];
       if (requestsList == null || requestsList is! List) {
         return RequestsResponse(requests: []);
       }
-
       return RequestsResponse(
         requests: requestsList
             .map((request) => RequestModel.fromJson(request))
             .toList(),
       );
     } catch (e) {
-      print('Error parsing RequestsResponse: $e'); // Debug log
+      print('Error parsing RequestsResponse: $e');
       return RequestsResponse(requests: []);
     }
   }
@@ -31,6 +28,7 @@ class RequestModel {
   String status;
   DateTime createdAt;
   DateTime updatedAt;
+  int v;
 
   RequestModel({
     required this.id,
@@ -39,6 +37,7 @@ class RequestModel {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
+    this.v = 0,
   });
 
   factory RequestModel.fromJson(Map<String, dynamic> json) {
@@ -50,9 +49,10 @@ class RequestModel {
         status: json["status"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
+        v: json["__v"] ?? 0,
       );
     } catch (e) {
-      print('Error parsing RequestModel: $e'); // Debug log
+      print('Error parsing RequestModel: $e');
       return RequestModel(
         id: '',
         client: ClientModel.empty(),
@@ -75,6 +75,7 @@ class ClientModel {
   bool isVerified;
   DateTime createdAt;
   DateTime updatedAt;
+  int v;
 
   ClientModel({
     required this.id,
@@ -86,6 +87,7 @@ class ClientModel {
     required this.isVerified,
     required this.createdAt,
     required this.updatedAt,
+    this.v = 0,
   });
 
   factory ClientModel.fromJson(Map<String, dynamic> json) {
@@ -100,24 +102,14 @@ class ClientModel {
         isVerified: json["isVerified"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
+        v: json["__v"] ?? 0,
       );
     } catch (e) {
-      print('Error parsing ClientModel: $e'); // Debug log
-      return ClientModel(
-        id: '',
-        email: '',
-        role: '',
-        profile: ClientProfile.empty(),
-        profileModel: '',
-        image: '',
-        isVerified: false,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+      print('Error parsing ClientModel: $e');
+      return ClientModel.empty();
     }
   }
 
-  // Empty constructor for fallback
   factory ClientModel.empty() {
     return ClientModel(
       id: '',
@@ -136,28 +128,33 @@ class ClientModel {
 class ClientProfile {
   String id;
   String name;
+  String? gender;
+  int? age;
+  int v;
 
   ClientProfile({
     required this.id,
     required this.name,
+    this.gender,
+    this.age,
+    this.v = 0,
   });
 
-  factory ClientProfile.fromJson(Map<String, dynamic> json) {
-    try {
-      return ClientProfile(
-        id: json["_id"],
-        name: json["name"],
-      );
-    } catch (e) {
-      print('Error parsing ClientProfile: $e'); // Debug log
-      return ClientProfile(
-        id: '',
-        name: '',
-      );
-    }
+factory ClientProfile.fromJson(Map<String, dynamic> json) {
+  try {
+    return ClientProfile(
+      id: json["_id"],
+      name: json["name"],
+      gender: json["gender"] ?? '', 
+      age: json["age"] is int ? json["age"] : null, 
+      v: json["__v"] ?? 0,
+    );
+  } catch (e) {
+    print('Error parsing ClientProfile: $e');
+    return ClientProfile.empty();
   }
+}
 
-  // Empty constructor for fallback
   factory ClientProfile.empty() {
     return ClientProfile(
       id: '',

@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:healer_therapist/constants/colors.dart';
-import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/model/client/client_model.dart';
 
@@ -20,50 +17,51 @@ class ClientCardOngoing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log(client.profile.name);
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Card(
-        color: white,
-        child: SizedBox(
-            height: height * 0.16,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      padding: const EdgeInsets.all(8.0),
+      child: Stack(children: [
+        // Background Image
+        Container(
+          height: height * 0.25,
+          width: width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            image: DecorationImage(
+              image: NetworkImage(client.image),
+              fit: BoxFit.cover,
+              onError: (error, stackTrace) {},
+            ),
+          ),
+        ),
+
+        // Gradient Overlay
+        Container(
+          height: height * 0.25,
+          width: width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [transparent, black.withOpacity(0.7)],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: CircleAvatar(
-                        backgroundColor: transparent,
-                        radius: width * 0.125,
-                        child: (client.image.split('.').last == 'png')
-                            ? Image.network(
-                                fit: BoxFit.fitHeight,
-                                client.image,
-                                width: 90,
-                                height: 90,
-                              )
-                            : ClipOval(
-                                child: Image.network(
-                                  fit: BoxFit.fitHeight,
-                                  client.image,
-                                  width: 90,
-                                  height: 90,
-                                ),
-                              ))),
-                SizedBox(
-                  width: width * 0.55,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(client.profile.name, style: smallBold),
-                      smallSpace,
-                    ],
-                  ),
+                Text(
+                  client.profile.name,
+                  style: buttonText,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
-            )),
-      ),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 }

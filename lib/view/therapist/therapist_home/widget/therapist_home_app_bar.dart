@@ -30,14 +30,18 @@ class TherapistHomeAppBar extends StatelessWidget {
           child: BlocBuilder<TherapistBloc, TherapistState>(
             builder: (context, state) {
               if (state is TherapistProfileLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: white,
+                ));
               } else if (state is TherapistProfileLoaded) {
                 final user = state.therapist;
                 return InkWell(
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ViewTherapistProfile(therapist: user))),
+                          builder: (context) =>
+                              ViewTherapistProfile(therapist: user))),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

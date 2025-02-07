@@ -8,7 +8,7 @@ import 'package:healer_therapist/services/chat/socket.dart';
 import 'package:healer_therapist/services/token.dart';
 import 'package:healer_therapist/view/therapist/chat/widgets/chat_screen_app_bar.dart';
 import 'package:healer_therapist/view/therapist/chat/widgets/message_bubble.dart';
-
+import 'package:healer_therapist/widgets/empty.dart';
 
 class Message {
   final String text;
@@ -145,15 +145,22 @@ class ChatScreenState extends State<ChatScreen> {
         body: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.all(8),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final message = _messages[index];
-                  return MessageBubble(message: message);
-                },
-              ),
+              child: _messages.isEmpty
+                  ? const Empty(
+                      title: 'No Messages Yet',
+                      subtitle:
+                          'Say hello and start the conversation with your client. Your messages will appear here!',
+                      image: "asset/emptyConvo.jpg",
+                    )
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(8),
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        final message = _messages[index];
+                        return MessageBubble(message: message);
+                      },
+                    ),
             ),
             _buildMessageInput(),
           ],
@@ -177,10 +184,6 @@ class ChatScreenState extends State<ChatScreen> {
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.attach_file),
-            onPressed: () {},
-          ),
           Expanded(
             child: TextField(
               controller: _messageController,

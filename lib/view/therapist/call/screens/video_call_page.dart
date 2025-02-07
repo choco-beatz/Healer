@@ -1,16 +1,19 @@
-import 'dart:math';
+// import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:healer_therapist/bloc/agora/agora_bloc.dart';
+import 'package:healer_therapist/constants/colors.dart';
+import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/services/agora/agora_service.dart';
 import 'package:healer_therapist/services/agora/constants.dart';
+import 'package:healer_therapist/services/token.dart';
+import 'package:healer_therapist/widgets/loading.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class VideoCallPage extends StatefulWidget {
   final String channel;
   final AgoraService agoraService;
-  
+
   const VideoCallPage({
     super.key,
     required this.channel,
@@ -22,9 +25,11 @@ class VideoCallPage extends StatefulWidget {
 }
 
 class VideoCallPageState extends State<VideoCallPage> {
-
-int? _remoteUid;
+  String? token;
+  int? _remoteUid;
   bool _localUserJoined = false;
+  bool _isMuted = false;
+  bool _isFrontCamera = true;
   late RtcEngine _engine;
 
   @override
@@ -34,7 +39,7 @@ int? _remoteUid;
   }
 
   Future<void> initAgora() async {
-    // retrieve permissions
+    token = await getAgoraToken();
     await [Permission.microphone, Permission.camera].request();
 
     //create the engine
@@ -47,28 +52,22 @@ int? _remoteUid;
     _engine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("local user ${connection.localUid} joined");
           setState(() {
             _localUserJoined = true;
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint("remote user $remoteUid joined");
           setState(() {
             _remoteUid = remoteUid;
           });
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
-          debugPrint("remote user $remoteUid left channel");
           setState(() {
             _remoteUid = null;
           });
         },
-        onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
-          debugPrint(
-              '[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
-        },
+        onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {},
       ),
     );
 
@@ -77,7 +76,7 @@ int? _remoteUid;
     await _engine.startPreview();
 
     await _engine.joinChannel(
-      token: token,
+      token: token!,
       channelId: channel,
       uid: 0,
       options: const ChannelMediaOptions(),
@@ -86,44 +85,98 @@ int? _remoteUid;
 
   @override
   void dispose() {
-    super.dispose();
-
     _dispose();
+    super.dispose();
   }
 
   Future<void> _dispose() async {
     await _engine.leaveChannel();
     await _engine.release();
-    
+  }
+
+  void _toggleMute() {
+    setState(() => _isMuted = !_isMuted);
+    _engine.muteLocalAudioStream(_isMuted);
+  }
+
+  void _switchCamera() {
+    setState(() => _isFrontCamera = !_isFrontCamera);
+    _engine.switchCamera();
+  }
+
+  void _endCall() {
+    Navigator.pop(context);
   }
 
   // Create UI with local view and remote view
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Agora Video Call'),
-      ),
       body: Stack(
         children: [
-          Center(
-            child: _remoteVideo(),
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: SizedBox(
+          _remoteVideo(height, width),
+          Positioned(
+            top: 40,
+            left: 20,
+            child: Container(
               width: 100,
-              height: 150,
-              child: Center(
-                child: _localUserJoined
-                    ? AgoraVideoView(
-                        controller: VideoViewController(
-                          rtcEngine: _engine,
-                          canvas: const VideoCanvas(uid: 0),
-                        ),
-                      )
-                    : const CircularProgressIndicator(),
+              height: 100,
+              decoration: BoxDecoration(
+                color: main1,
+                borderRadius: BorderRadius.circular(15),
               ),
+              child: _localUserJoined
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: AgoraVideoView(
+                          controller: VideoViewController(
+                            rtcEngine: _engine,
+                            canvas: const VideoCanvas(uid: 0),
+                          ),
+                        ),
+                      ),
+                    )
+                  : const Loading(),
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Material(
+                  type: MaterialType.transparency,
+                  child: FloatingActionButton(
+                    backgroundColor: _isMuted ? red : white,
+                    onPressed: _toggleMute,
+                    child: Icon(_isMuted ? Icons.mic_off : Icons.mic,
+                        color: black),
+                  ),
+                ),
+                Material(
+                  type: MaterialType.transparency,
+                  child: FloatingActionButton(
+                    backgroundColor: red,
+                    onPressed: _endCall,
+                    child: const Icon(Icons.call_end, color: white),
+                  ),
+                ),
+                Material(
+                  type: MaterialType.transparency,
+                  child: FloatingActionButton(
+                    backgroundColor: white,
+                    onPressed: _switchCamera,
+                    child: const Icon(Icons.switch_camera, color: black),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -131,8 +184,7 @@ int? _remoteUid;
     );
   }
 
-  // Display remote user's video
-  Widget _remoteVideo() {
+  Widget _remoteVideo(double height, double width) {
     if (_remoteUid != null) {
       return AgoraVideoView(
         controller: VideoViewController.remote(
@@ -142,138 +194,21 @@ int? _remoteUid;
         ),
       );
     } else {
-      return const Text(
-        'Please wait for remote user to join',
-        textAlign: TextAlign.center,
+      return Center(
+        child: Stack(
+          children: [
+            const Loading(),
+            Positioned(
+              top: height * 0.48,
+              left: width * 0.25,
+              child: const Text(
+                'The client will join soon...',
+                style: smallBold,
+              ),
+            ),
+          ],
+        ),
       );
     }
   }
 }
-
-  // bool localUserJoined = false;
-  // int? _remoteUid;
-  // bool _isMuted = false;
-  // bool _isCameraOff = false;
-  // late AgoraBloc _agoraBloc;
-  // late int _uid;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _agoraBloc = context.read<AgoraBloc>();
-  //   _uid = 100000 + Random().nextInt(900000); // Generate random UID
-  //   _setupCall();
-  // }
-
-  // Future<void> _setupCall() async {
-  //   await widget.agoraService.engine.enableVideo();
-  //   await widget.agoraService.engine.startPreview();
-    
-  //   _agoraBloc.add(JoinVideoCall(
-  //     token: token,
-  //     callID: widget.channel,
-  //     uid: _uid,
-  //     callerId: _uid.toString(),
-  //   ));
-  // }
-
-  // void _toggleMute() {
-  //   setState(() {
-  //     _isMuted = !_isMuted;
-  //     widget.agoraService.engine.muteLocalAudioStream(_isMuted);
-  //   });
-  // }
-
-  // void _toggleCamera() {
-  //   setState(() {
-  //     _isCameraOff = !_isCameraOff;
-  //     widget.agoraService.engine.enableLocalVideo(!_isCameraOff);
-  //   });
-  // }
-
-  // @override
-  // void dispose() {
-  //   widget.agoraService.engine.stopPreview();
-  //   _agoraBloc.add(LeaveCall());
-  //   super.dispose();
-  // }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: const Text('Video Call'),
-  //       actions: [
-  //         IconButton(
-  //           icon: const Icon(Icons.call_end),
-  //           onPressed: () {
-  //             _agoraBloc.add(LeaveCall());
-  //             Navigator.pop(context);
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //     body: BlocListener<AgoraBloc, AgoraState>(
-  //       listener: (context, state) {
-  //         if (state is RemoteUserJoinedState) {
-  //           setState(() => _remoteUid = state.remoteUid);
-  //         }
-  //         if (state is VideoCallJoinedState) {
-  //           setState(() => localUserJoined = true);
-  //         }
-  //         if (state is AgoraErrorState) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text(state.error)),
-  //           );
-  //         }
-  //       },
-  //       child: Stack(
-  //         children: [
-  //           Center(
-  //             child: _remoteUid != null
-  //                 ? AgoraVideoView(
-  //                     controller: VideoViewController.remote(
-  //                       rtcEngine: widget.agoraService.engine,
-  //                       canvas: VideoCanvas(uid: _remoteUid),
-  //                       connection: RtcConnection(channelId: widget.channel),
-  //                     ),
-  //                   )
-  //                 : const Text('Waiting for remote user...'),
-  //           ),
-  //           Align(
-  //             alignment: Alignment.topRight,
-  //             child: SizedBox(
-  //               width: 100,
-  //               height: 150,
-  //               child: AgoraVideoView(
-  //                 controller: VideoViewController(
-  //                   rtcEngine: widget.agoraService.engine,
-  //                   canvas: const VideoCanvas(uid: 0),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           Align(
-  //             alignment: Alignment.bottomCenter,
-  //             child: Padding(
-  //               padding: const EdgeInsets.only(bottom: 20),
-  //               child: Row(
-  //                 mainAxisAlignment: MainAxisAlignment.center,
-  //                 children: [
-  //                   IconButton(
-  //                     icon: Icon(_isMuted ? Icons.mic_off : Icons.mic),
-  //                     onPressed: _toggleMute,
-  //                   ),
-  //                   IconButton(
-  //                     icon: Icon(_isCameraOff ? Icons.videocam_off : Icons.videocam),
-  //                     onPressed: _toggleCamera,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }

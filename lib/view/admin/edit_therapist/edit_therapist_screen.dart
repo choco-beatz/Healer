@@ -152,12 +152,26 @@ class _EditTherapistState extends State<EditTherapist> {
                                           ? 'Please enter the name'
                                           : null,
                                   decoration: textField('Enter the name'),
-                                  cursorColor: Colors.black26,
+                                  cursorColor: textColor,
                                   style: textFieldStyle,
                                 ),
                               ),
                               space,
-                              
+                              const Text(
+                                ' Bio',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(
+                                height: 100,
+                                child: TextFormField(
+                                  maxLines: 5,
+                                  controller: bioController,
+                                  decoration: textField('Enter the bio'),
+                                  cursorColor: textColor,
+                                  style: textFieldStyle,
+                                ),
+                              ),
                               space,
                               const Text(
                                 ' Qualification',
@@ -175,7 +189,7 @@ class _EditTherapistState extends State<EditTherapist> {
                                           : null,
                                   decoration:
                                       textField('Enter the qualification'),
-                                  cursorColor: Colors.black26,
+                                  cursorColor: textColor,
                                   style: textFieldStyle,
                                 ),
                               ),
@@ -196,7 +210,7 @@ class _EditTherapistState extends State<EditTherapist> {
                                           : null,
                                   decoration:
                                       textField('Enter the specialization'),
-                                  cursorColor: Colors.black26,
+                                  cursorColor: textColor,
                                   style: textFieldStyle,
                                 ),
                               ),
@@ -209,7 +223,7 @@ class _EditTherapistState extends State<EditTherapist> {
                                     controller: experienceController,
                                     decoration:
                                         textField('Enter the experience'),
-                                    cursorColor: Colors.black26,
+                                    cursorColor: textColor,
                                     style: textFieldStyle),
                               ),
                               space,
@@ -228,7 +242,7 @@ class _EditTherapistState extends State<EditTherapist> {
                                       return null;
                                     },
                                     decoration: textField('Enter the password'),
-                                    cursorColor: Colors.black26,
+                                    cursorColor: textColor,
                                     style: textFieldStyle),
                               ),
                               space,

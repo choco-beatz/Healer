@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healer_therapist/bloc/agora/agora_bloc.dart';
 import 'package:healer_therapist/bloc/appointment/appointment_bloc.dart';
 import 'package:healer_therapist/bloc/chat/chat_bloc.dart';
 import 'package:healer_therapist/bloc/login/login_bloc.dart';
@@ -15,7 +16,7 @@ import 'package:healer_therapist/view/therapist/appointment/appointment.dart';
 import 'package:healer_therapist/view/therapist/call/screens/call.dart';
 import 'package:healer_therapist/view/therapist/chat/screens/inbox.dart';
 import 'package:healer_therapist/view/therapist/client/view_client.dart';
-import 'package:healer_therapist/view/therapist/therapist_home/widget/appointment.dart';
+import 'package:healer_therapist/view/therapist/therapist_home/widget/todays_appointment.dart';
 import 'package:healer_therapist/view/therapist/therapist_home/widget/menu_card.dart';
 import 'package:healer_therapist/view/therapist/therapist_home/widget/therapist_home_app_bar.dart';
 import 'package:healer_therapist/widgets/drawer.dart';
@@ -37,13 +38,13 @@ class _TherapistHomeState extends State<TherapistHome> {
   void initState() {
     context.read<LoginBloc>().add(CheckTokenEvent());
     _initializeSocket();
+    context.read<AgoraBloc>().add(GetToken());
     super.initState();
   }
 
   Future<void> _initializeSocket() async {
     userId = await getUserId();
 
-    print(userId!);
     if (userId != null) {
       socketService.initialize(userId: userId!);
     } else {
@@ -60,7 +61,6 @@ class _TherapistHomeState extends State<TherapistHome> {
           drawer: const DrawerWidget(),
           body: BlocListener<LoginBloc, LoginState>(
             listener: (context, state) {
-              log('redirect: ${state.redirect.toString()}');
               if (state.redirect == true || !state.tokenValid) {
                 Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) => LoginScreen()));
@@ -95,10 +95,10 @@ class _TherapistHomeState extends State<TherapistHome> {
                         }).toList();
 
                         if (todayAppointments.isNotEmpty) {
-                          return Expanded(
-                            child:
-                                AppointmentToday(height: height, width: width),
-                          );
+                          return AppointmentToday(
+                              height: height,
+                              width: width,
+                              appointments: todayAppointments);
                         } else {
                           return SizedBox.shrink();
                         }
@@ -111,79 +111,76 @@ class _TherapistHomeState extends State<TherapistHome> {
                     padding: const EdgeInsets.all(10),
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ViewClient()));
-                              },
-                              child: MenuCard(
-                                width: width,
-                                image: 'asset/business.png',
-                                title: 'Clients',
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Appointment()));
-                              },
-                              child: MenuCard(
-                                width: width,
-                                image: 'asset/appointment.png',
-                                title: 'Appointment',
-                              ),
-                            )
-                          ],
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const ViewClient()));
+                          },
+                          child: MenuCard(
+                            width: width,
+                            image: 'asset/business.png',
+                            title: 'Clients',
+                            subtitle: "Manage your client flow with ease.",
+                          ),
                         ),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () => Navigator.push(
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MultiBlocProvider(
-                                          providers: [
-                                            BlocProvider(
-                                              create: (context) => ChatBloc()
-                                                ..add(LoadChatsEvent()),
-                                            ),
-                                          ],
-                                          child: Inbox(
-                                            socketService: socketService,
-                                          ),
-                                        )),
-                              ),
-                              child: MenuCard(
-                                width: width,
-                                image: 'asset/chat1.png',
-                                title: 'Chat',
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => BlocProvider(
-                                          create: (context) => TherapistBloc()
-                                            ..add(OnGoingClientEvent()),
-                                          child:  Contacts(userId: userId!, socketService: socketService,),
-                                        )),
-                              ),
-                              child: MenuCard(
-                                width: width,
-                                image: 'asset/call.png',
-                                title: 'Calls',
-                              ),
-                            )
-                          ],
+                                    builder: (context) => const Appointment()));
+                          },
+                          child: MenuCard(
+                            width: width,
+                            image: 'asset/appointment.png',
+                            title: 'Appointment',
+                            subtitle: 'Easily manage your appointments.',
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MultiBlocProvider(
+                                      providers: [
+                                        BlocProvider(
+                                          create: (context) =>
+                                              ChatBloc()..add(LoadChatsEvent()),
+                                        ),
+                                      ],
+                                      child: Inbox(
+                                        socketService: socketService,
+                                      ),
+                                    )),
+                          ),
+                          child: MenuCard(
+                            width: width,
+                            image: 'asset/chat1.png',
+                            title: 'Chat',
+                            subtitle: 'Private and secure chats.',
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                      create: (context) => TherapistBloc()
+                                        ..add(OnGoingClientEvent()),
+                                      child: Contacts(
+                                        userId: userId!,
+                                        socketService: socketService,
+                                      ),
+                                    )),
+                          ),
+                          child: MenuCard(
+                            width: width,
+                            image: 'asset/call.png',
+                            title: 'Calls',
+                            subtitle: "Virtual therapy made easy.",
+                          ),
                         ),
                       ],
                     ),

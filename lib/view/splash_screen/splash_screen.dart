@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -58,22 +57,6 @@ class _SplashScreenState extends State<SplashScreen> {
               }
             },
           ),
-          // BlocListener<LoginBloc, LoginState>(
-          //   listener: (context, state) {
-          //     if (state.role == 'admin') {
-          //       Navigator.pushReplacement(
-          //         context,
-          //         MaterialPageRoute(builder: (context) => const AdminHome()),
-          //       );
-          //     } else if (state.role == 'therapist') {
-          //       Navigator.pushReplacement(
-          //         context,
-          //         MaterialPageRoute(
-          //             builder: (context) => const TherapistHome()),
-          //       );
-          //     }
-          //   },
-          // ),
         ],
         child: Container(
           height: height,
@@ -82,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(height: 150, 'asset/treatment.png'),
+              Image.asset(height: 150, 'asset/treatmentW.png'),
               Text('Healer',
                   style: GoogleFonts.satisfy(
                     textStyle: const TextStyle(color: white, fontSize: 50),

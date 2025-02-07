@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/login/login_bloc.dart';
+import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/snackbar.dart';
 import 'package:healer_therapist/constants/space.dart';
 import 'package:healer_therapist/model/login/login_model.dart';
@@ -59,7 +60,7 @@ class LoginScreen extends StatelessWidget {
                             return null;
                           },
                           decoration: textField('Email'),
-                          cursorColor: Colors.black26,
+                          cursorColor: textColor,
                           style: textFieldStyle),
                     ),
                     space,
@@ -77,7 +78,7 @@ class LoginScreen extends StatelessWidget {
                           },
                           keyboardType: TextInputType.visiblePassword,
                           decoration: textField('Password'),
-                          cursorColor: Colors.black26,
+                          cursorColor: textColor,
                           style: textFieldStyle),
                     ),
                     space,

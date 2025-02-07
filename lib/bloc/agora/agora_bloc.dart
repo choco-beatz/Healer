@@ -10,11 +10,7 @@ class AgoraBloc extends Bloc<AgoraEvent, AgoraState> {
 
   AgoraBloc(this._agoraService) : super(AgoraInitial()) {
     on<InitializeAgora>(_onInitializeAgora);
-    on<JoinVideoCall>(_onJoinVideoCall);
-    on<LeaveCall>(_onLeaveCall);
-    on<DisposeAgora>(_onDisposeAgora);
-    on<ReceiveCall>(_onReceiveCall);
-    
+    on<GetToken>(_onGetToken);
   }
 
   Future<void> _onInitializeAgora(
@@ -33,58 +29,20 @@ class AgoraBloc extends Bloc<AgoraEvent, AgoraState> {
     }
   }
 
-  Future<void> _onJoinVideoCall(
-    JoinVideoCall event,
+  Future<void> _onGetToken(
+    GetToken event,
     Emitter<AgoraState> emit,
   ) async {
     try {
-      await _agoraService.joinVideoCall(
-        callID: event.callID,
-        uid: event.uid,
-        token: token,
-        onLocalUserJoined: () => emit(VideoCallJoinedState()),
-        onUserJoined: (remoteUid) => emit(RemoteUserJoinedState(remoteUid)),
-        onUserOffline: (remoteUid) => emit(RemoteUserLeftState(remoteUid)),
-      );
+      await _agoraService.fetchAgoraToken();
+     
+      emit(AgoraLoadedState(
+        agoraService: _agoraService, 
+        isInitialized: true
+      ));
     } catch (error) {
       emit(AgoraErrorState(error.toString()));
     }
   }
-
-  Future<void> _onLeaveCall(
-    LeaveCall event,
-    Emitter<AgoraState> emit,
-  ) async {
-    try {
-      await _agoraService.leaveCall();
-      emit(AgoraInitial());
-    } catch (error) {
-      emit(AgoraErrorState(error.toString()));
-    }
-  }
-
-  Future<void> _onDisposeAgora(
-    DisposeAgora event,
-    Emitter<AgoraState> emit,
-  ) async {
-    await _agoraService.dispose();
-    emit(AgoraInitial());
-  }
-
-   Future<void> _onReceiveCall(
-    ReceiveCall event,
-    Emitter<AgoraState> emit,
-  ) async {
-    emit(CallIncomingState(
-      callerId: event.callerId,
-      channel: channel,
-    ));
-  }
-
-
-  @override
-  Future<void> close() {
-    _agoraService.dispose();
-    return super.close();
-  }
+ 
 }

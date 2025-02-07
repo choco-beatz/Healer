@@ -33,7 +33,8 @@ Future<String> login(LoginModel login) async {
       return '';
     }
   } catch (e) {
-    log('Error during login: $e');
+    // log('Error during login:');
+    log(e.toString());
     return '';
   }
 }

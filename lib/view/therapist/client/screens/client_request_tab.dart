@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/therapist/therapist_bloc.dart';
 import 'package:healer_therapist/view/therapist/client/widgets/client_card.dart';
 import 'package:healer_therapist/view/therapist/client/widgets/client_detail.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/empty.dart';
+import 'package:healer_therapist/widgets/empty.dart';
 import 'package:healer_therapist/widgets/loading.dart';
 
 class ClientRequestsTab extends StatefulWidget {
@@ -25,7 +25,12 @@ class ClientRequestsTabState extends State<ClientRequestsTab>
       } else if (state is ClientLoaded) {
         final clients = state.list;
         if (clients.isEmpty) {
-          return const Center(child: EmptyClient());
+          return const Empty(
+            title: "No Pending Requests",
+            subtitle:
+                "Once users send requests to be your clients, they'll appear here.",
+            image: "asset/emptyRequest.jpg",
+          );
         }
         return ListView.builder(
           itemCount: clients.length,
@@ -49,7 +54,12 @@ class ClientRequestsTabState extends State<ClientRequestsTab>
       } else if (state is ClientError) {
         return Center(child: Text(state.message));
       } else {
-        return const EmptyClient();
+        return const Empty(
+          title: "No Pending Requests",
+          subtitle:
+              "Once users send requests to be your clients, they'll appear here.",
+          image: "asset/emptyRequest.jpg",
+        );
       }
     });
   }

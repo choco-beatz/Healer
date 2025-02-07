@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,13 +5,14 @@ import 'package:healer_therapist/bloc/admin/admin_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/snackbar.dart';
 import 'package:healer_therapist/view/admin/add_therapist/add_therapist_screen.dart';
+import 'package:healer_therapist/widgets/empty.dart';
 import 'package:healer_therapist/widgets/floating_button.dart';
-import 'package:healer_therapist/view/admin/admin_home/widgets/empty.dart';
 import 'package:healer_therapist/view/admin/admin_home/widgets/home_app_bar.dart';
 import 'package:healer_therapist/view/admin/admin_home/widgets/therapist_card.dart';
 import 'package:healer_therapist/view/login/login_screen.dart';
 import 'package:healer_therapist/view/admin/view_therapist/view_therapist_screen.dart';
 import 'package:healer_therapist/widgets/drawer.dart';
+import 'package:healer_therapist/widgets/loading.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({super.key});
@@ -39,7 +39,6 @@ class _AdminHomeState extends State<AdminHome> {
         drawer: const DrawerWidget(),
         body: BlocConsumer<AdminBloc, AdminState>(
           listener: (context, state) {
-            log('redirect: ${state.redirectToLogin.toString()}');
             if (state.redirectToLogin == true) {
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => LoginScreen()));
@@ -50,12 +49,17 @@ class _AdminHomeState extends State<AdminHome> {
           },
           builder: (context, state) {
             if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Loading();
             }
 
             // When therapists list is empty and no search query is present, show EmptyTherapist.
             if (state.list.isEmpty && state.searchQuery.isEmpty) {
-              return const Center(child:  EmptyTherapist());
+              return const Center(
+                  child: Empty(
+                title: 'No Therapist Found',
+                subtitle: 'Add a therapist to view them here',
+                image: 'asset/emptyOngoing.jpg',
+              ));
             }
 
             return Column(
@@ -75,7 +79,6 @@ class _AdminHomeState extends State<AdminHome> {
                             color: fieldBG,
                             border: Border.all(color: border, width: 1.5),
                           ),
-                          
                           onChanged: (value) => context
                               .read<AdminBloc>()
                               .add(SearchTherapistEvent(value)),
@@ -87,12 +90,6 @@ class _AdminHomeState extends State<AdminHome> {
                                 ? state.list
                                 : state.searchResults;
 
-                            // Debugging
-                            log('Search Query: ${state.searchQuery}');
-                            log('Search Results: ${state.searchResults}');
-                            log('Therapists: $therapists');
-                            log('Therapists length: ${therapists.length}');
-
                             // Show "No results found" if search query is not empty and there are no results
                             if (state.searchQuery.isNotEmpty &&
                                 state.searchResults.isEmpty) {
@@ -101,7 +98,17 @@ class _AdminHomeState extends State<AdminHome> {
                             }
 
                             // Show the therapist list
-                            return ListView.builder(
+                            return GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio:
+                                    0.75, // Adjusted for better spacing
+                                mainAxisSpacing:
+                                    0, // Reduced space between rows
+                                crossAxisSpacing:
+                                    0, // Consistent spacing between columns
+                              ),
                               itemCount: therapists.length,
                               itemBuilder: (context, index) {
                                 final therapist = therapists[index];
@@ -114,8 +121,8 @@ class _AdminHomeState extends State<AdminHome> {
                                     ),
                                   ),
                                   child: TherapistCard(
-                                    height: height,
-                                    width: width,
+                                    height: height, // Adjusted height
+                                    width: width, // Adjusted width
                                     therapist: therapist,
                                   ),
                                 );

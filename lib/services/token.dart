@@ -9,10 +9,13 @@ Future<void> storeToken(String token) async {
   await secureStorage.write(key: 'token', value: token);
 }
 
+Future<void> storeAgoraToken(String agoraToken) async {
+  await secureStorage.write(key: 'agoraToken', value: agoraToken);
+}
+
 Future<void> storeUserId(String userId) async {
   await secureStorage.write(key: 'userId', value: userId);
 }
-
 
 bool isExpired(String token) {
   try {
@@ -20,6 +23,7 @@ bool isExpired(String token) {
     final exp = jwt.payload['exp'];
     if (exp == null || exp is! int) {
       log('Invalid or missing exp field in JWT payload');
+
       return true;
     }
     final expiryDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
@@ -40,11 +44,16 @@ Future<String?> getValidToken() async {
   return token;
 }
 
+Future<String?> getAgoraToken() async {
+  String? token = await secureStorage.read(key: 'agoraToken');
+
+  return token;
+}
+
 Future<String?> getUserId() async {
   final userId = await secureStorage.read(key: 'userId');
   return userId;
 }
-
 
 Future<void> clearToken() async {
   await secureStorage.delete(key: 'token');

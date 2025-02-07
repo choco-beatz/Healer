@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'colors.dart';
 
 const gradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
+    begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
     colors: [
       main2,
       main1,

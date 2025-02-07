@@ -3,74 +3,59 @@ import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/constants/textstyle.dart';
 import 'package:healer_therapist/model/client/client_model.dart';
 
+
 class ContactCard extends StatelessWidget {
   const ContactCard({
     super.key,
     required this.client,
     required this.height,
     required this.width,
-    required this.onCall,
-    required this.onVideoCall, required this.onDetails,
+    required this.onVideoCall,
+    required this.onDetails,
   });
 
   final double height;
   final double width;
   final VoidCallback onDetails;
   final ClientModel client;
-  final VoidCallback onCall;
   final VoidCallback onVideoCall;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
       child: Card(
-        color: white,
-        child: SizedBox(
-          height: height * 0.1,
+        elevation: 4, // Adds a shadow for depth
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              // **Profile Picture**
               CircleAvatar(
-                backgroundColor: transparent,
-                radius: width * 0.07,
-                child: (client.image.split('.').last == 'png')
-                    ? Image.network(
-                        fit: BoxFit.fitHeight,
-                        client.image,
-                        width: 90,
-                        height: 90,
-                      )
-                    : ClipOval(
-                        child: Image.network(
-                          fit: BoxFit.fitHeight,
-                          client.image,
-                          width: 90,
-                          height: 90,
-                        ),
-                      ),
+                  backgroundColor: transparent,
+                  radius: width * 0.08,
+                  backgroundImage: NetworkImage(client.image)),
+              const SizedBox(width: 15), // Spacing
+
+              // **Client Name**
+              Expanded(
+                child: Text(
+                  client.profile.name,
+                  style: smallBold,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              Text(client.profile.name, style: smallBold),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: onCall,
-                    icon: const Icon(
-                      Icons.call,
-                      color: main1,
-                      size: 30,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: onVideoCall,
-                    icon: const Icon(
-                      Icons.videocam,
-                      color: main1,
-                      size: 30,
-                    ),
-                  )
-                ],
+
+              IconButton(
+                onPressed: onVideoCall,
+                icon: const Icon(Icons.videocam, color: main1, size: 28),
+              ),
+              IconButton(
+                onPressed: onDetails,
+                icon: const Icon(Icons.info_outline, color: main1, size: 26),
               ),
             ],
           ),

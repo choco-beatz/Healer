@@ -20,8 +20,6 @@ class _ViewClientState extends State<ViewClient>
   @override
   void initState() {
     super.initState();
-    // context.read<TherapistBloc>().add(OnGoingClientEvent());
-    // context.read<TherapistBloc>().add(FetchRequestEvent());
     tabController = TabController(length: 2, vsync: this);
     tabController.addListener(() {
       if (!tabController.indexIsChanging) {
@@ -34,7 +32,6 @@ class _ViewClientState extends State<ViewClient>
 
               break;
             case 1:
-              // context.read<TherapistBloc>().add(FetchRequestEvent());
               break;
           }
         }

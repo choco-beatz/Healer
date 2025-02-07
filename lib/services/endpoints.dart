@@ -15,3 +15,4 @@ const requestRespondUrl = '${baseUrl}requests/respond';
 const slotUrl = '${baseUrl}slots';
 const profileUrl = '${baseUrl}user/profile';
 const inboxUrl = '${baseUrl}chats';
+const agoraTokenUrl = '${baseUrl}agora/generate-token';

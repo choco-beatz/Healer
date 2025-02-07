@@ -18,3 +18,21 @@ Widget buildButton({required String text, bool imp = false}) {
     ),
   );
 }
+
+Widget buildLongButton({required String text, bool imp = false}) {
+  return Container(
+    height: 42,
+    width: 300,
+    decoration: BoxDecoration(
+        gradient: imp == false ? gradient : redGradient,
+        borderRadius: BorderRadius.circular(8)),
+    child: Center(
+      child: Text(
+        text,
+        style: const TextStyle(
+            color: white, fontSize: 20, fontWeight: FontWeight.w600),
+      ),
+    ),
+  );
+}
+

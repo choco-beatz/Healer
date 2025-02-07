@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/appointment/appointment_bloc.dart';
 import 'package:healer_therapist/constants/colors.dart';
-import 'package:healer_therapist/view/therapist/appointment/widgets/appoinment_respond_card.dart';
+import 'package:healer_therapist/view/therapist/appointment/widgets/appoinment_client_card.dart';
 import 'package:healer_therapist/view/therapist/appointment/widgets/client_detail.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/empty.dart';
+import 'package:healer_therapist/widgets/empty.dart';
 import 'package:healer_therapist/widgets/loading.dart';
 
 class AppointmentRespond extends StatelessWidget {
@@ -23,14 +23,7 @@ class AppointmentRespond extends StatelessWidget {
         listenWhen: (previous, current) =>
             previous.responseStatus != current.responseStatus,
         listener: (context, state) {
-          if (state.responseStatus == 'success') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Operation successful!'),
-                backgroundColor: main1,
-              ),
-            );
-          } else if (state.responseStatus == 'error') {
+          if (state.responseStatus == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('An error occurred. Please try again.'),
@@ -53,8 +46,11 @@ class AppointmentRespond extends StatelessWidget {
             final appointments = state.appointments;
 
             if (appointments.isEmpty) {
-              return const Center(
-                child: EmptyClient(),
+              return const Empty(
+                title: 'No Appointment Requests',
+                subtitle:
+                    "You haven't received any appointment requests yet. Stay tuned for new bookings from clients.",
+                image: "asset/emptyAppointment.jpg",
               );
             }
 
@@ -72,7 +68,7 @@ class AppointmentRespond extends StatelessWidget {
                       ),
                     ),
                   ),
-                  child: AppointmentRespondCard(
+                  child: AppointmentClientCard(
                     key: ValueKey(appointment.id),
                     height: height,
                     width: width,

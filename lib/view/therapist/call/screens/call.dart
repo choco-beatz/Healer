@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healer_therapist/bloc/agora/agora_bloc.dart';
@@ -8,12 +6,11 @@ import 'package:healer_therapist/constants/colors.dart';
 import 'package:healer_therapist/model/client/client_model.dart';
 import 'package:healer_therapist/services/agora/constants.dart';
 import 'package:healer_therapist/services/chat/socket.dart';
-import 'package:healer_therapist/view/therapist/call/screens/audio_call_page.dart';
 import 'package:healer_therapist/view/therapist/call/screens/video_call_page.dart';
 import 'package:healer_therapist/view/therapist/call/widgets/contact_card.dart';
-import 'package:healer_therapist/view/therapist/client/widgets/empty.dart';
 import 'package:healer_therapist/widgets/appbar.dart';
 import 'package:healer_therapist/view/therapist/client/widgets/client_detail.dart';
+import 'package:healer_therapist/widgets/empty.dart';
 import 'package:healer_therapist/widgets/loading.dart';
 
 class Contacts extends StatefulWidget {
@@ -28,12 +25,17 @@ class Contacts extends StatefulWidget {
 
 class _ContactsState extends State<Contacts> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TherapistBloc>().add(OnGoingClientEvent());
       context.read<AgoraBloc>().add(InitializeAgora(appId, widget.userId));
     });
 
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(50),
@@ -56,7 +58,12 @@ class _ContactsState extends State<Contacts> {
             } else if (state is ClientLoaded) {
               final clients = state.list;
               if (clients.isEmpty) {
-                return const Center(child: EmptyClient());
+                return const Empty(
+                  title: "No Active Sessions",
+                  subtitle:
+                      "Start a video session with your clients once they are ready to connect.",
+                  image: "asset/emptyCall.jpg",
+                );
               }
 
               return BlocBuilder<AgoraBloc, AgoraState>(
@@ -81,30 +88,20 @@ class _ContactsState extends State<Contacts> {
                       itemBuilder: (context, index) {
                         final client = clients[index].client;
 
-                        return GestureDetector(
-                            onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ClientDetails(client: client),
-                                  ),
-                                ),
-                            child: ContactCard(
-                              height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width,
-                              client: client,
-                              onCall: () => _navigateToAudioCall(
-                                  context, client, agoraState),
-                              onVideoCall: () => _navigateToVideoCall(
-                                  context, client, agoraState),
-                              onDetails: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ClientDetails(client: client),
-                                ),
-                              ),
-                            ));
+                        return ContactCard(
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width,
+                          client: client,
+                          onVideoCall: () =>
+                              _navigateToVideoCall(context, client, agoraState),
+                          onDetails: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ClientDetails(client: client),
+                            ),
+                          ),
+                        );
                       },
                     );
                   } else if (agoraState is AgoraErrorState) {
@@ -125,12 +122,15 @@ class _ContactsState extends State<Contacts> {
                       ),
                     );
                   }
-                  return const Center(child: CircularProgressIndicator());
+                  return const Loading();
                 },
               );
             } else {
-              return const Center(
-                child: EmptyClient(),
+              return const Empty(
+                title: "No Active Sessions",
+                subtitle:
+                    "Start a video session with your clients once they are ready to connect.",
+                image: "asset/emptyCall.jpg",
               );
             }
           },
@@ -139,33 +139,13 @@ class _ContactsState extends State<Contacts> {
     );
   }
 
-  void _navigateToAudioCall(
-      BuildContext context, ClientModel client, AgoraLoadedState agoraState) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AudioCallPage(
-          agoraService: agoraState.agoraService,
-          channelId: channel,
-          userId: uid,
-        ),
-      ),
-    );
-  }
-
   void _navigateToVideoCall(BuildContext context, ClientModel client,
-    AgoraLoadedState agoraState) async {
-  try {
-    // // First, set up the call-started listener
-    // widget.socketService.listenToEvent('call-started', (dynamic data) {
-    //   // Handle the response
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Call started successfully!')),
-    //   );
-       widget.socketService.emitEvent('start-call', {
-      'from': widget.userId,
-      'to': client.id,
-    });
+      AgoraLoadedState agoraState) async {
+    try {
+      widget.socketService.emitEvent('start-call', {
+        'from': widget.userId,
+        'to': client.id,
+      });
       // Navigate to the call page
       Navigator.push(
         context,
@@ -176,24 +156,20 @@ class _ContactsState extends State<Contacts> {
           ),
         ),
       );
-
-    //   // Clean up the listener
-    //   widget.socketService.removeEventListener('call-started');
-    // });
-
-    // Then, in a separate step, emit the start-call event
-   
-
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to start video call: $e')),
-    );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to start video call: $e')),
+      );
+    }
   }
-}
 
   @override
   void dispose() {
-    context.read<AgoraBloc>().add(InitializeAgora(appId, widget.userId));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<AgoraBloc>().add(InitializeAgora(appId, widget.userId));
+      }
+    });
     super.dispose();
   }
 }
